@@ -36,7 +36,7 @@ function generateLevel()
   
   pipesUsed = {}
   pipesMatrix = {}
-  for i = 1, level.map.xSize do
+  for i = 0, level.map.xSize do
     pipesMatrix[i] = {}
   end
 end
@@ -61,6 +61,14 @@ function generatePipe()
   end
 end
 
+function getPipeFromMatrix(x , y)
+  return pipesMatrix[x][y]
+end
+
+function setPipeInMatrix(pipe, x, y)
+  pipesMatrix[x][y] = pipe
+end
+
 function usePipe()
   -- do not use if on the start position
   if player.x == level.xStart and player.y == level.yStart then
@@ -70,13 +78,12 @@ function usePipe()
   local pipe = table.remove( pipes, 1 )
   pipe:use( player.x, player.y )
   table.insert( pipesUsed, pipe )
-  pipesMatrix[player.x][player.y] = pipe
-  --table.insert( pipesMatrix[player.y], pipe )
+  setPipeInMatrix(pipe, player.x, player.y)
   generatePipe()
 end
 
 function startFlowingWater()
-  local pipe = pipesMatrix[level.xStart][level.yStart-1]
+  local pipe = getPipeFromMatrix(level.xStart, level.yStart-1)
   if pipe then
     pipe:waterFrom(0,-1)
     updatable = pipe 
@@ -85,7 +92,7 @@ end
 
 function flowToPipe()
   local x, y = updatable:getOffsetForNextPipe()
-  local pipe = pipesMatrix[updatable.x + x][updatable.y + y]
+  local pipe = getPipeFromMatrix(updatable.x + x,updatable.y + y)
   if pipe then
     updatable = pipe 
     updatable:waterFrom(x, y)
