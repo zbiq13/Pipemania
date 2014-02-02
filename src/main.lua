@@ -64,11 +64,11 @@ function generatePipe()
   end
 end
 
-function getPipeFromMatrix(x , y)
+function getPipeFromMatrix(x, y)
   --przechodzenie przez krawedzie planszy
   if x < 0 and level:canPassWallAt(x, y) then
-    x = level.map.xSize and level:canPassWallAt(x, y)
-  elseif x > level.map.xSize then
+    x = level.map.xSize
+  elseif x > level.map.xSize and level:canPassWallAt(x, y) then
     x = 0
   end
   
@@ -78,7 +78,6 @@ function getPipeFromMatrix(x , y)
     y = 0
   end
   
-  print("biore x[", x, "] y[", y, "]" )
   return pipesMatrix[x][y]
 end
 
@@ -162,7 +161,7 @@ function love.draw()
  
  -- player
  player:draw()
- 
+  
  camera:unset()
 end
 
