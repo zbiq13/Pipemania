@@ -7,7 +7,7 @@ function Pipe:init()
   self.color = { math.random(0, 255), math.random(0, 255), math.random(0, 255) } 
   
   self.time = level.pipeTime
-  self.speed = 10
+  self.speed = level.waterSpeed
   self.waterColor = { 45, 252, 7 }
   
   self.color1 = self.color;
@@ -55,6 +55,7 @@ function Pipe:waterFrom(x, y)
   self.xWaterFrom = x
   self.yWaterFrom = y
   self.time = level.pipeTime
+  self.speed = level.waterSpeed
 end
 
 function Pipe:getDebugString()

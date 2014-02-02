@@ -16,6 +16,8 @@ function Level:init( difficulty )
   self.yStart = math.random(0, self.map.ySize)
   self.startColor = { 0, 0, 0 }
   self.pipeTime = 40
+  self.waterSpeed = 10
+  self.initialTimer = 100
 end
 
 

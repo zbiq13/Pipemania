@@ -66,7 +66,7 @@ function generatePipe()
 end
 
 function getPipeFromMatrix(x, y)
-  --przechodzenie przez krawedzie planszy
+  --pass map edge
   if x < 0 and level:canPassWallAt(x, y) then
     x = level.map.xSize
   elseif x > level.map.xSize and level:canPassWallAt(x, y) then
@@ -134,7 +134,19 @@ function love.keypressed(key, isrepeat)
   if key == "l" then
       generateLevel()
   end
+  
+  if key == "f" then
+      hurryWater()
+  end
 
+end
+
+
+function hurryWater()
+  level.waterSpeed = 100
+  if updatable then
+    updatable.speed = level.waterSpeed
+  end  
 end
 
 
