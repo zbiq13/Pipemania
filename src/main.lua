@@ -19,31 +19,77 @@ function love.load()
 end
 
 function love.update(dt)
-  watertimer:update( dt )
+  updatable:update(dt)
 end
 
 function generateLevel()
   level = Level(1)
   player = Player(level)
   watertimer = Watertimer()
+  updatable = watertimer
   pipes = {}
+  pipeIndex = 1;
   
   for i = 1, 5 do
     generatePipe()
   end
   
   pipesUsed = {}
+  pipesMatrix = {}
+  for i = 1, level.map.xSize do
+    pipesMatrix[i] = {}
+  end
 end
 
 function generatePipe()
-  table.insert( pipes, Pipe() )
+  local i = math.random( 0, 6 )
+  if i == 0 then
+    table.insert( pipes, HorizontalPipe() )
+  elseif i == 1 then
+    table.insert( pipes, VerticalPipe() )
+  elseif i == 2 then
+    table.insert( pipes, CrossPipe() )
+  elseif i == 3 then
+    table.insert( pipes, AngleLeftUpPipe() )
+  elseif i == 4 then
+    table.insert( pipes, AngleLeftDownPipe() )
+  elseif i == 5 then
+    table.insert( pipes, AngleUpRightPipe() )
+  elseif i == 6 then
+    table.insert( pipes, AngleDownRightPipe() )
+
+  end
 end
 
 function usePipe()
+  -- do not use if on the start position
+  if player.x == level.xStart and player.y == level.yStart then
+    return
+  end
+  
   local pipe = table.remove( pipes, 1 )
   pipe:use( player.x, player.y )
   table.insert( pipesUsed, pipe )
+  pipesMatrix[player.x][player.y] = pipe
+  --table.insert( pipesMatrix[player.y], pipe )
   generatePipe()
+end
+
+function startFlowingWater()
+  local pipe = pipesMatrix[level.xStart][level.yStart-1]
+  if pipe then
+    pipe:waterFrom(0,-1)
+    updatable = pipe 
+  end
+end
+
+function flowToPipe()
+  local x, y = updatable:getOffsetForNextPipe()
+  local pipe = pipesMatrix[updatable.x + x][updatable.y + y]
+  if pipe then
+    updatable = pipe 
+    updatable:waterFrom(x, y)
+  end
 end
 
 function love.keypressed(key, isrepeat)

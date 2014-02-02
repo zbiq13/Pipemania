@@ -1,6 +1,6 @@
 require('util/class')
 
-Watertimer = class()
+Watertimer = class(Updatable)
 function Watertimer:init()
   self.time = 100
   self.speed = 10
@@ -10,6 +10,8 @@ end
 function Watertimer:update( dt )
   if self.time > 0 then
     self.time = self.time - self.speed * dt
+  else
+    startFlowingWater(); 
   end 
 end
 

@@ -25,6 +25,16 @@ function camera:rotate(dr)
   self.rotation = self.rotation + dr
 end
 
+function camera:rotateX(dr)
+  self.rotation = self.rotation + dr
+  love.graphics.rotate(-self.rotation)
+end
+
+function camera:derotateX(dr)
+  love.graphics.rotate(self.rotation)
+  self.rotation = self.rotation - dr  
+end
+
 function camera:scale(sx, sy)
   sx = sx or 1
   self.scaleX = self.scaleX * sx
