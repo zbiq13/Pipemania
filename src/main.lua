@@ -101,7 +101,7 @@ end
 
 function startFlowingWater()
   local pipe = getPipeFromMatrix(level.xStart, level.yStart-1)
-  if pipe then
+  if pipe and pipe:acceptWaterFrom(0,-1) then
     pipe:waterFrom(0,-1)
     updatable = pipe 
   else
@@ -112,7 +112,7 @@ end
 function flowToPipe()
   local x, y = updatable:getOffsetForNextPipe()
   local pipe = getPipeFromMatrix(updatable.x + x,updatable.y + y)
-  if pipe then
+  if pipe and pipe:acceptWaterFrom(x, y) then
     updatable = pipe 
     updatable:waterFrom(x, y)
   else

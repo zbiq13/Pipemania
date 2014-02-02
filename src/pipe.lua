@@ -68,6 +68,10 @@ function HorizontalPipe:getOffsetForNextPipe()
  return self.xWaterFrom, 0
 end
 
+function HorizontalPipe:acceptWaterFrom(x, y)
+  return y == 0
+end
+
 function HorizontalPipe:drawPipe(x, y)
   love.graphics.setColor(self.color)
   love.graphics.rectangle('fill', x, y, level.map.tileWidth, level.map.tileHeight)
@@ -75,7 +79,12 @@ function HorizontalPipe:drawPipe(x, y)
   love.graphics.line(x, y + (level.map.tileHeight / 2), x + level.map.tileWidth , y + (level.map.tileHeight / 2) )
 end
 
+
 VerticalPipe = class( Pipe )
+
+function VerticalPipe:acceptWaterFrom(x, y)
+  return x == 0
+end
 
 function VerticalPipe:getOffsetForNextPipe()
  return 0, self.yWaterFrom
@@ -88,7 +97,12 @@ function VerticalPipe:drawPipe(x, y)
   love.graphics.line(x + (level.map.tileWidth / 2), y, x + (level.map.tileWidth / 2) , y + level.map.tileHeight )
 end
 
+
 CrossPipe = class( Pipe )
+
+function CrossPipe:acceptWaterFrom(x, y)
+  return true
+end
 
 function CrossPipe:drawPipe(x, y)
   love.graphics.setColor(self.color)
@@ -104,6 +118,10 @@ end
 
 AngleLeftUpPipe = class( Pipe )
 
+function AngleLeftUpPipe:acceptWaterFrom(x, y)
+  return x == 1 or y == 1
+end
+
 function AngleLeftUpPipe:getOffsetForNextPipe()
  if self.xWaterFrom == 1 then
   return 0, -1
@@ -118,7 +136,12 @@ function AngleLeftUpPipe:drawPipe(x, y)
   love.graphics.line(x, y + (level.map.tileHeight / 2), x + (level.map.tileWidth / 2) , y + (level.map.tileHeight / 2), x + (level.map.tileWidth / 2), y )
 end
 
+
 AngleLeftDownPipe = class( Pipe )
+
+function AngleLeftDownPipe:acceptWaterFrom(x, y)
+  return x == 1 or y == -1
+end
 
 function AngleLeftDownPipe:getOffsetForNextPipe()
  if self.xWaterFrom == 1 then
@@ -134,7 +157,12 @@ function AngleLeftDownPipe:drawPipe(x, y)
   love.graphics.line(x, y + (level.map.tileHeight / 2), x + (level.map.tileWidth / 2) , y + (level.map.tileHeight / 2), x + (level.map.tileWidth / 2), y + level.map.tileHeight )
 end
 
+
 AngleUpRightPipe = class( Pipe )
+
+function AngleUpRightPipe:acceptWaterFrom(x, y)
+  return x == -1 or y == 1
+end
 
 function AngleUpRightPipe:getOffsetForNextPipe()
  if self.xWaterFrom == -1 then
@@ -150,7 +178,12 @@ function AngleUpRightPipe:drawPipe(x, y)
   love.graphics.line(x + (level.map.tileWidth / 2), y, x + (level.map.tileWidth / 2) , y + (level.map.tileHeight / 2), x + level.map.tileWidth, y  + (level.map.tileHeight / 2) )
 end
 
+
 AngleDownRightPipe = class( Pipe )
+
+function AngleDownRightPipe:acceptWaterFrom(x, y)
+  return x == -1 or y == -1
+end
 
 function AngleDownRightPipe:getOffsetForNextPipe()
  if self.xWaterFrom == -1 then
