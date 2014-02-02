@@ -19,7 +19,9 @@ function love.load()
 end
 
 function love.update(dt)
-  updatable:update(dt)
+  if not lost then
+    updatable:update(dt)  
+  end
 end
 
 function generateLevel()
@@ -29,6 +31,7 @@ function generateLevel()
   updatable = watertimer
   pipes = {}
   pipeIndex = 1;
+  lost = false
   
   for i = 1, 5 do
     generatePipe()
@@ -101,6 +104,8 @@ function startFlowingWater()
   if pipe then
     pipe:waterFrom(0,-1)
     updatable = pipe 
+  else
+    lost = true
   end
 end
 
@@ -110,6 +115,8 @@ function flowToPipe()
   if pipe then
     updatable = pipe 
     updatable:waterFrom(x, y)
+  else
+    lost = true
   end
 end
 
