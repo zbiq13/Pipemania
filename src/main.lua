@@ -62,6 +62,20 @@ function generatePipe()
 end
 
 function getPipeFromMatrix(x , y)
+  --przechodzenie przez krawedzie planszy
+  if x < 0 and level:canPassWallAt(x, y) then
+    x = level.map.xSize and level:canPassWallAt(x, y)
+  elseif x > level.map.xSize then
+    x = 0
+  end
+  
+  if y < 0 and level:canPassWallAt(x, y) then
+    y = level.map.ySize
+  elseif y > level.map.ySize and level:canPassWallAt(x, y) then
+    y = 0
+  end
+  
+  print("biore x[", x, "] y[", y, "]" )
   return pipesMatrix[x][y]
 end
 

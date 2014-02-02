@@ -18,6 +18,11 @@ function Level:init( difficulty )
 end
 
 
+function Level:canPassWallAt(x, y)
+  return true
+end
+
+
 function Level:draw()
   
   love.graphics.reset()
