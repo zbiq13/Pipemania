@@ -19,3 +19,7 @@ function Watertimer:draw()
   love.graphics.setColor( self.color )
   love.graphics.rectangle( 'fill', 5, 400 - self.time, 10, self.time )  
 end
+
+function Watertimer:getDebugString()
+  return "watertimer"
+end

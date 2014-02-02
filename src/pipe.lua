@@ -56,6 +56,11 @@ function Pipe:waterFrom(x, y)
   self.yWaterFrom = y
 end
 
+function Pipe:getDebugString()
+  xOff, yOff = self:getOffsetForNextPipe()
+  return string.format("x[%d] y[%d] next x[%d] y[%d]", self.x, self.y, self.x + xOff, self.y + yOff)
+end
+
 
 HorizontalPipe = class( Pipe )
 

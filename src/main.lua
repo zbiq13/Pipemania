@@ -3,6 +3,7 @@ require('watertimer')
 require('level')
 require('player')
 require('pipe')
+require('pipedebug')
 
 
 function love.load()
@@ -147,7 +148,9 @@ function love.draw()
   end
   
   watertimer:draw()
-
+  printDebug()
+  
+  
   camera:set()
   level:draw()
   
