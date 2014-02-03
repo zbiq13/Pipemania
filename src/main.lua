@@ -7,6 +7,17 @@ require('pipedebug')
 
 
 function love.load()
+  math.randomseed(os.time())
+  
+  pipeTypes = {}
+  table.insert( pipeTypes, HorizontalPipe )
+  table.insert( pipeTypes, VerticalPipe )
+  table.insert( pipeTypes, CrossPipe )
+  table.insert( pipeTypes, AngleLeftUpPipe )
+  table.insert( pipeTypes, AngleLeftDownPipe )
+  table.insert( pipeTypes, AngleUpRightPipe )
+  table.insert( pipeTypes, AngleDownRightPipe )
+  
   generateLevel()
   
   width = love.graphics.getWidth()
@@ -46,23 +57,7 @@ function generateLevel()
 end
 
 function generatePipe()
-  local i = math.random( 0, 6 )
-  if i == 0 then
-    table.insert( pipes, HorizontalPipe() )
-  elseif i == 1 then
-    table.insert( pipes, VerticalPipe() )
-  elseif i == 2 then
-    table.insert( pipes, CrossPipe() )
-  elseif i == 3 then
-    table.insert( pipes, AngleLeftUpPipe() )
-  elseif i == 4 then
-    table.insert( pipes, AngleLeftDownPipe() )
-  elseif i == 5 then
-    table.insert( pipes, AngleUpRightPipe() )
-  elseif i == 6 then
-    table.insert( pipes, AngleDownRightPipe() )
-
-  end
+  table.insert(pipes, pipeTypes[math.random(1, table.getn(pipeTypes))]())
 end
 
 function getPipeFromMatrix(x, y)
