@@ -1,4 +1,5 @@
 require('util/class')
+require('point')
 
 
 Level = class()
@@ -12,17 +13,18 @@ function Level:init(levelDesc)
     tileImage = love.graphics.newImage( "img/tile.gif" ),    
   }
   
-  if levelDesc.xStart == 'random' then
-    self.xStart = math.random(0, self.map.xSize - 1)
+  self.startPoint = Point(levelDesc.startPoint.x, levelDesc.startPoint.y, self.map.xSize, self.map.ySize )
+  --[[if levelDesc.startPoint.x == 'random' then
+    self.startPoint.x = math.random(0, self.map.xSize - 1)
   else
-    self.xStart = levelDesc.xStart
+    self.startPoint.x = levelDesc.startPoint.x
   end
   
-  if levelDesc.yStart == 'random' then
-    self.yStart = math.random(0, self.map.ySize - 1)
+  if levelDesc.startPoint.y == 'random' then
+    self.startPoint.y = math.random(0, self.map.ySize - 1)
   else
-    self.yStart = levelDesc.yStart
-  end
+    self.startPoint.y = levelDesc.startPoint.y
+  end]]--
   
   self.startColor = { 0, 0, 0 }
   self.pipeTime = levelDesc.pipeTime
@@ -46,6 +48,6 @@ function Level:draw()
   end
   
   love.graphics.setColor(self.startColor)
-  love.graphics.rectangle('fill', self.xStart * self.map.tileWidth, self.yStart * self.map.tileHeight, self.map.tileWidth, self.map.tileHeight)
+  love.graphics.rectangle('fill', self.startPoint.x * self.map.tileWidth, self.startPoint.y * self.map.tileHeight, self.map.tileWidth, self.map.tileHeight)
   
 end

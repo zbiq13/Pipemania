@@ -7,8 +7,7 @@ function readLevelDescs()
   {
     xSize = 10,
     ySize = 8,
-    xStart = 'random',
-    yStart = 'random',
+    startPoint = { x = 'random', y = 'random' },
     initialTime = 100,
     pipeTime = 40,
     waterSpeed = 10
@@ -30,12 +29,8 @@ function addLevel( level )
     level.ySize = defaultLevel.ySize
   end
   
-  if not level.xStart then
-    level.xStart = defaultLevel.xStart
-  end
-  
-  if not level.yStart then
-    level.yStart = defaultLevel.yStart
+  if not level.startPoint then
+    level.startPoint = defaultLevel.startPoint
   end
   
   if not level.initialTime then

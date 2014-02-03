@@ -92,7 +92,7 @@ end
 
 function usePipe()
   -- do not use if on the start position
-  if player.x == level.xStart and player.y == level.yStart then
+  if player.x == level.startPoint.x and player.y == level.startPoint.y then
     return
   end
   
@@ -104,7 +104,7 @@ function usePipe()
 end
 
 function startFlowingWater()
-  local pipe = getPipeFromMatrix(level.xStart, level.yStart-1)
+  local pipe = getPipeFromMatrix(level.startPoint.x, level.startPoint.y-1)
   if pipe and pipe:acceptWaterFrom(0,-1) then
     pipe:waterFrom(0,-1)
     updatable = pipe 
