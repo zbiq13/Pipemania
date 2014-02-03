@@ -44,6 +44,8 @@ function generateLevel()
     return
   end
   level = Level(levelDescs[1])
+  --narazie zapetlam
+  table.insert(levelDescs, levelDescs[1])
   table.remove(levelDescs, 1)
   player = Player(level)
   watertimer = Watertimer()
