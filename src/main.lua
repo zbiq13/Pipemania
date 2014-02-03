@@ -1,5 +1,6 @@
 require('camera')
 require('watertimer')
+require('leveldesc')
 require('level')
 require('player')
 require('pipe')
@@ -18,6 +19,7 @@ function love.load()
   table.insert( pipeTypes, AngleUpRightPipe )
   table.insert( pipeTypes, AngleDownRightPipe )
   
+  readLevelDescs()
   generateLevel()
   
   width = love.graphics.getWidth()
@@ -37,7 +39,12 @@ function love.update(dt)
 end
 
 function generateLevel()
-  level = Level(1)
+  if table.getn(levelDescs) == 0 then
+    gameWon()
+    return
+  end
+  level = Level(levelDescs[1])
+  table.remove(levelDescs, 1)
   player = Player(level)
   watertimer = Watertimer()
   updatable = watertimer
@@ -63,14 +70,14 @@ end
 function getPipeFromMatrix(x, y)
   --pass map edge
   if x < 0 and level:canPassWallAt(x, y) then
-    x = level.map.xSize
-  elseif x > level.map.xSize and level:canPassWallAt(x, y) then
+    x = level.map.xSize - 1
+  elseif x > level.map.xSize - 1 and level:canPassWallAt(x, y) then
     x = 0
   end
   
   if y < 0 and level:canPassWallAt(x, y) then
-    y = level.map.ySize
-  elseif y > level.map.ySize and level:canPassWallAt(x, y) then
+    y = level.map.ySize - 1
+  elseif y > level.map.ySize - 1 and level:canPassWallAt(x, y) then
     y = 0
   end
   
@@ -100,7 +107,7 @@ function startFlowingWater()
     pipe:waterFrom(0,-1)
     updatable = pipe 
   else
-    lost = true
+    gameLost()
   end
 end
 
@@ -111,8 +118,17 @@ function flowToPipe()
     updatable = pipe 
     updatable:waterFrom(x, y)
   else
-    lost = true
+    gameLost()
   end
+end
+
+function gameLost()
+  lost = true
+  --todo
+end
+
+function gameWon()
+  --todo
 end
 
 function love.keypressed(key, isrepeat)

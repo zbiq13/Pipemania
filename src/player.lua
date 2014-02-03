@@ -15,11 +15,11 @@ end
 function Player:keypressed( key )
   if key == 'left' and self.x > 0 then
     self.x = self.x - 1
-  elseif key == 'right' and self.x < level.map.xSize  then
+  elseif key == 'right' and self.x < level.map.xSize - 1  then
     self.x = self.x + 1
   elseif key == 'up' and self.y > 0 then
     self.y = self.y - 1
-  elseif key == 'down' and self.y < level.map.ySize  then
+  elseif key == 'down' and self.y < level.map.ySize - 1  then
     self.y = self.y + 1
   end
 end

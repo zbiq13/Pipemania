@@ -2,22 +2,32 @@ require('util/class')
 
 
 Level = class()
-function Level:init( difficulty )
+function Level:init(levelDesc)
   self.map = 
   {
-    xSize = 10,
-    ySize = 7,
+    xSize = levelDesc.xSize,
+    ySize = levelDesc.ySize,
     tileWidth = 40,
     tileHeight = 40,
     tileImage = love.graphics.newImage( "img/tile.gif" ),    
   }
   
-  self.xStart = math.random(0, self.map.xSize)
-  self.yStart = math.random(0, self.map.ySize)
+  if levelDesc.xStart == 'random' then
+    self.xStart = math.random(0, self.map.xSize - 1)
+  else
+    self.xStart = levelDesc.xStart
+  end
+  
+  if levelDesc.yStart == 'random' then
+    self.yStart = math.random(0, self.map.ySize - 1)
+  else
+    self.yStart = levelDesc.yStart
+  end
+  
   self.startColor = { 0, 0, 0 }
-  self.pipeTime = 40
-  self.waterSpeed = 10
-  self.initialTimer = 100
+  self.pipeTime = levelDesc.pipeTime
+  self.waterSpeed = levelDesc.waterSpeed
+  self.initialTime = levelDesc.initialTime
 end
 
 
@@ -29,8 +39,8 @@ end
 function Level:draw()
   
   love.graphics.reset()
-  for x=0, self.map.xSize do
-    for y=0, self.map.ySize do
+  for x=0, self.map.xSize - 1 do
+    for y=0, self.map.ySize - 1 do
       love.graphics.draw(self.map.tileImage, x * self.map.tileWidth, y * self.map.tileHeight); 
     end
   end

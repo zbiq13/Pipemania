@@ -2,7 +2,7 @@ require('util/class')
 
 Watertimer = class(Updatable)
 function Watertimer:init()
-  self.time = level.initialTimer
+  self.time = level.initialTime
   self.speed = level.waterSpeed
   self.color = { 45, 252, 7 }
 end

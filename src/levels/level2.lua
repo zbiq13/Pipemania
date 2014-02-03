@@ -1,0 +1,3 @@
+return {
+    waterSpeed = 20
+}
