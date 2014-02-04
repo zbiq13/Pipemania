@@ -1,3 +1,4 @@
 return {
-    waterSpeed = 20
+    waterSpeed = 20,
+    endPoint = { x = 'random', y = 'random' }
 }

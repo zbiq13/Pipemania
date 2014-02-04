@@ -10,21 +10,15 @@ function Level:init(levelDesc)
     ySize = levelDesc.ySize,
     tileWidth = 40,
     tileHeight = 40,
-    tileImage = love.graphics.newImage( "img/tile.gif" ),    
+    tileImage = levelDesc.tileImage,
+    startImage = levelDesc.startImage,
+    endImage = levelDesc.endImage    
   }
   
-  self.startPoint = Point(levelDesc.startPoint.x, levelDesc.startPoint.y, self.map.xSize, self.map.ySize )
-  --[[if levelDesc.startPoint.x == 'random' then
-    self.startPoint.x = math.random(0, self.map.xSize - 1)
-  else
-    self.startPoint.x = levelDesc.startPoint.x
+  self.startPoint = Point(levelDesc.startPoint, self.map.xSize, self.map.ySize)
+  if levelDesc.endPoint then
+    self.endPoint = Point(levelDesc.endPoint, self.map.xSize, self.map.ySize)
   end
-  
-  if levelDesc.startPoint.y == 'random' then
-    self.startPoint.y = math.random(0, self.map.ySize - 1)
-  else
-    self.startPoint.y = levelDesc.startPoint.y
-  end]]--
   
   self.startColor = { 0, 0, 0 }
   self.pipeTime = levelDesc.pipeTime
@@ -47,7 +41,9 @@ function Level:draw()
     end
   end
   
-  love.graphics.setColor(self.startColor)
-  love.graphics.rectangle('fill', self.startPoint.x * self.map.tileWidth, self.startPoint.y * self.map.tileHeight, self.map.tileWidth, self.map.tileHeight)
+  self.startPoint:drawWithImage(self.map.startImage, self.map.tileWidth, self.map.tileHeight)
   
+  if self.endPoint then
+    self.endPoint:drawWithImage(self.map.endImage, self.map.tileWidth, self.map.tileHeight)
+  end
 end

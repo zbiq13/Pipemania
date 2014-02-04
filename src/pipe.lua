@@ -15,11 +15,17 @@ function Pipe:init()
   
   self.xWaterFrom = 0
   self.yWaterFrom = 0
+  
+  self.filled = false
 end
 
 function Pipe:use( x, y )
   self.x = x
   self.y = y 
+end
+
+function Pipe:filledWithWater()
+  self.filled = true  
 end
 
 function Pipe:draw()
@@ -199,5 +205,33 @@ function AngleDownRightPipe:drawPipe(x, y)
   love.graphics.rectangle('fill', x, y, level.map.tileWidth, level.map.tileHeight)
   love.graphics.setColor( {0, 0, 0} )
   love.graphics.line(x + (level.map.tileWidth / 2), y + level.map.tileHeight, x + (level.map.tileWidth / 2) , y + (level.map.tileHeight / 2), x + level.map.tileWidth, y  + (level.map.tileHeight / 2) )
+end
+
+
+StartPipe = class( Pipe )
+
+function StartPipe:acceptWaterFrom(x, y)
+  return false
+end
+
+function StartPipe:getOffsetForNextPipe()
+ return 0, -1 
+end
+
+function StartPipe:drawPipe(x, y)
+end
+
+
+EndPipe = class( Pipe )
+
+function EndPipe:acceptWaterFrom(x, y)
+  return x == 0 and y == 1
+end
+
+function EndPipe:getOffsetForNextPipe()
+ return 0, 0
+end
+
+function EndPipe:drawPipe(x, y)
 end
 

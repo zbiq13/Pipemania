@@ -6,5 +6,7 @@ function printDebug()
   end
   if lost then
     love.graphics.printf("you lost", 0, height - 20, width, "left")
+  elseif wonLevel then
+    love.graphics.printf("you won", 0, height - 20, width, "left")
   end
 end

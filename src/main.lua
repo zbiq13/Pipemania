@@ -33,7 +33,7 @@ function love.load()
 end
 
 function love.update(dt)
-  if not lost then
+  if not lost and not wonLevel then
     updatable:update(dt)  
   end
 end
@@ -53,6 +53,7 @@ function generateLevel()
   pipes = {}
   pipeIndex = 1;
   lost = false
+  wonLevel = false
   
   for i = 1, 5 do
     generatePipe()
@@ -62,6 +63,11 @@ function generateLevel()
   pipesMatrix = {}
   for i = 0, level.map.xSize do
     pipesMatrix[i] = {}
+  end
+
+  pipesMatrix[level.startPoint.x][level.startPoint.y] = StartPipe()
+  if level.endPoint then
+    pipesMatrix[level.endPoint.x][level.endPoint.y] = EndPipe()
   end
 end
 
@@ -91,10 +97,18 @@ function setPipeInMatrix(pipe, x, y)
 end
 
 function usePipe()
-  -- do not use if on the start position
-  if player.x == level.startPoint.x and player.y == level.startPoint.y then
-    return
-  end
+  
+  -- check if usable
+  local possiblePipe = getPipeFromMatrix(player.x, player.y);  
+  
+  if possiblePipe then
+    if possiblePipe:is_a( StartPipe ) or
+      possiblePipe:is_a( EndPipe ) or
+      possiblePipe == updatable or
+      possiblePipe.filled then
+        return
+    end
+  end  
   
   local pipe = table.remove( pipes, 1 )
   pipe:use( player.x, player.y )
@@ -115,10 +129,15 @@ end
 
 function flowToPipe()
   local x, y = updatable:getOffsetForNextPipe()
-  local pipe = getPipeFromMatrix(updatable.x + x,updatable.y + y)
+  local pipe = getPipeFromMatrix(updatable.x + x, updatable.y + y)
   if pipe and pipe:acceptWaterFrom(x, y) then
-    updatable = pipe 
-    updatable:waterFrom(x, y)
+    if pipe:is_a(EndPipe) then
+      levelWon()      
+    else
+      updatable:filledWithWater()
+      updatable = pipe 
+      updatable:waterFrom(x, y)
+    end
   else
     gameLost()
   end
@@ -127,6 +146,10 @@ end
 function gameLost()
   lost = true
   --todo
+end
+
+function levelWon()
+  wonLevel = true
 end
 
 function gameWon()
@@ -168,8 +191,6 @@ function love.draw()
   --draw available pieces
   for i, pipe in pairs(pipes) do
     pipe:drawAsAvailable( i )
---    love.graphics.setColor(p.color)
---    love.graphics.rectangle('fill', 0, level.map.tileHeight * ( 5 - i ), level.map.tileWidth, level.map.tileHeight)
   end
   
   watertimer:draw()
@@ -183,8 +204,6 @@ function love.draw()
   --draw used pieces
   for i, pipe in pairs(pipesUsed) do
     pipe:draw()
---    love.graphics.setColor(p.color)
---    love.graphics.rectangle('fill', p.x * level.map.tileWidth, p.y * level.map.tileHeight, level.map.tileWidth, level.map.tileHeight)
   end
  
  -- player
