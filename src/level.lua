@@ -17,7 +17,10 @@ function Level:init(levelDesc)
   
   self.startPoint = Point(levelDesc.startPoint, self.map.xSize, self.map.ySize)
   if levelDesc.endPoint then
-    self.endPoint = Point(levelDesc.endPoint, self.map.xSize, self.map.ySize)
+    repeat 
+      self.endPoint = Point(levelDesc.endPoint, self.map.xSize, self.map.ySize)
+    until ( levelDesc.endPoint.x ~= 'random' or math.fmod( math.abs( self.endPoint.x - self.startPoint.x ), self.map.xSize ) > 2 ) and
+      ( levelDesc.endPoint.y ~= 'random' or math.fmod( math.abs( self.endPoint.y - self.startPoint.y ), self.map.ySize ) > 2 )
   end
   
   self.startColor = { 0, 0, 0 }
