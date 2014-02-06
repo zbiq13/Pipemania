@@ -64,11 +64,17 @@ function Level:init(levelDesc)
   self.goals = {}
   self.endPointGoal = EndPointGoal()
   self.lampsGoal = LampsGoal(table.getn(self.lamps))  
+  self.circleGoal = CircleGoal(levelDesc.circlesNo)  
+  
   table.insert( self.goals, self.endPointGoal )  
   
   if self.lampsGoal.lampsNo > 0 then
     table.insert( self.goals, self.lampsGoal )
-  end  
+  end
+    
+  if self.circleGoal.circlesNo > 0 then
+    table.insert( self.goals, self.circleGoal )
+  end
 end
 
 

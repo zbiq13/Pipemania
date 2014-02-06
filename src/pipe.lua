@@ -190,6 +190,9 @@ function CrossPipe:update(dt)
     if self.time <= 0 and not self.hFilled then
       self.filled = true 
       self.hFilled = true
+      if self.vFilled then
+        level.circleGoal:circleDone()
+      end
       flowToPipe()
     end 
   end
@@ -198,6 +201,9 @@ function CrossPipe:update(dt)
     if self.time <= 0 and not self.vFilled then
       self.filled = true 
       self.vFilled = true
+      if self.hFilled then
+        level.circleGoal:circleDone()
+      end
       flowToPipe()
     end 
   end

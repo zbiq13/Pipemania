@@ -33,7 +33,9 @@ function readLevelDescs()
     lampImage = love.graphics.newImage("img/lamps.png"),
     
     enemiesNo = 0,
-    enemyImageAnim = {}
+    enemyImageAnim = {},
+    
+    circlesNo = 0
   }
   
   local animDir = love.filesystem.getDirectoryItems("img/pipe1anim")
