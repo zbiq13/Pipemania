@@ -1,5 +1,6 @@
 
 function printDebug()
+  love.graphics.setFont(debugFont)
   love.graphics.printf(string.format("player at x[%d] y[%d]", player.x, player.y), 0, height - 80, width, "left")
   love.graphics.printf(string.format("timer: %d", updatable.time), 0, height - 60, width, "left")
   if updatable then

@@ -28,9 +28,9 @@ function Pipe:use( x, y )
   self.y = y 
 end
 
-function Pipe:filledWithWater()
+--[[function Pipe:filledWithWater()
   self.filled = true  
-end
+end]]--
 
 function Pipe:draw()
   self:drawPipe( self.x * level.map.tileWidth, self.y * level.map.tileHeight )
@@ -87,7 +87,7 @@ function Pipe:waterFrom(x, y)
 end
 
 function Pipe:getDebugString()
-  xOff, yOff = self:getOffsetForNextPipe()
+  local xOff, yOff = self:getOffsetForNextPipe()
   return string.format("x[%d] y[%d] next x[%d] y[%d]", self.x, self.y, self.x + xOff, self.y + yOff)
 end
 

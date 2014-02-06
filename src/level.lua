@@ -1,5 +1,6 @@
 require('util/class')
 require('point')
+require('lamp')
 
 
 Level = class()
@@ -24,16 +25,21 @@ function Level:init(levelDesc)
     
     verticalPipeImageAnim = levelDesc.verticalPipeImageAnim,
     horizontalPipeImageAnim = levelDesc.horizontalPipeImageAnim,
-    downRightPipeImageAnim = levelDesc.downRightPipeImageAnim
+    downRightPipeImageAnim = levelDesc.downRightPipeImageAnim,
+    
+    lampImage = levelDesc.lampImage
   }
   
   self.startPoint = Point(levelDesc.startPoint, self.map.xSize, self.map.ySize)
-  if levelDesc.endPoint then
-    repeat 
-      self.endPoint = Point(levelDesc.endPoint, self.map.xSize, self.map.ySize)
-    until ( levelDesc.endPoint.x ~= 'random' or math.fmod( math.abs( self.endPoint.x - self.startPoint.x ), self.map.xSize ) > 2 ) and
-      ( levelDesc.endPoint.y ~= 'random' or math.fmod( math.abs( self.endPoint.y - self.startPoint.y ), self.map.ySize ) > 2 )
-  end
+  repeat 
+    self.endPoint = Point(levelDesc.endPoint, self.map.xSize, self.map.ySize)
+  until ( levelDesc.endPoint.x ~= 'random' or math.fmod( math.abs( self.endPoint.x - self.startPoint.x ), self.map.xSize ) > 2 ) and
+    ( levelDesc.endPoint.y ~= 'random' or math.fmod( math.abs( self.endPoint.y - self.startPoint.y ), self.map.ySize ) > 2 )
+  
+  self.lamps = {}
+  for i, lampDesc in next, levelDesc.lamps, nil do
+    table.insert(self.lamps, Lamp(lampDesc))
+  end 
   
   self.startColor = { 0, 0, 0 }
   self.pipeTime = levelDesc.pipeTime
@@ -49,19 +55,30 @@ function Level:canPassWallAt(x, y)
 end
 
 
+function Level:checkResult()
+  local lampsLighted = true
+  
+  for i, lamp in next,self.lamps,nil do
+    lampsLighted = lampsLighted and lamp.lighted
+  end 
+  
+  if lampsLighted then
+    levelWon()
+  else
+    gameLost()
+  end
+end
+
+
 function Level:draw()
   
   love.graphics.reset()
   love.graphics.draw(self.map.backgroundImage, x, y)
-  --[[for x=0, self.map.xSize - 1 do
-    for y=0, self.map.ySize - 1 do
-      love.graphics.draw(self.map.tileImage, x * self.map.tileWidth, y * self.map.tileHeight); 
-    end
-  end]]--
   
-  self.startPoint:drawWithImage(self.map.startImage, self.map.tileWidth, self.map.tileHeight)
+  self.startPoint:drawWithImage(self.map.startImage)
+  self.endPoint:drawWithImage(self.map.endImage)
   
-  if self.endPoint then
-    self.endPoint:drawWithImage(self.map.endImage, self.map.tileWidth, self.map.tileHeight)
-  end
+  for i, lamp in next,self.lamps,nil do
+    lamp:draw()
+  end 
 end

@@ -15,11 +15,11 @@ function Point:init(pointDesc, width, height)
   end
 end
 
-function Point:draw(color, tileWidth, tileHeight)
+function Point:draw(color)
   love.graphics.setColor(color)
-  love.graphics.rectangle('fill', self.x * tileWidth, self.y * tileHeight, tileWidth, tileHeight)
+  love.graphics.rectangle('fill', self.x * level.map.tileWidth, self.y * level.map.tileHeight, level.map.tileWidth, level.map.tileHeight)
 end
 
-function Point:drawWithImage(image, tileWidth, tileHeight)
-  love.graphics.draw(image, self.x * tileWidth, self.y * tileHeight)
+function Point:drawWithImage(image)
+  love.graphics.draw(image, self.x * level.map.tileWidth, self.y * level.map.tileHeight)
 end

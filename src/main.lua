@@ -4,12 +4,19 @@ require('leveldesc')
 require('level')
 require('player')
 require('pipe')
+require('lamp')
 require('pipedebug')
 
 
 function love.load()
   love.window.setMode(1300, 700, {fullscreen=false, vsync=false, minwidth=800, minheight=600})
   math.randomseed(os.time())
+  
+  font = love.graphics.newFont( 42 )
+  debugFont = love.graphics.newFont( 12 )
+  showText = false
+  blinkRate = 10
+  blink = blinkRate
   
   pipeTypes = {}
   table.insert( pipeTypes, HorizontalPipe )
@@ -41,7 +48,14 @@ function love.update(dt)
         pipe:update(dt)
       end
     end
+  else
+    blink = blink - dt * 25
+    if blink < 0 then
+      blink = blinkRate
+      showText = not showText
+    end    
   end
+  
 end
 
 function generateLevel()
@@ -72,9 +86,11 @@ function generateLevel()
   end
 
   pipesMatrix[level.startPoint.x][level.startPoint.y] = StartPipe()
-  if level.endPoint then
-    pipesMatrix[level.endPoint.x][level.endPoint.y] = EndPipe()
-  end
+  pipesMatrix[level.endPoint.x][level.endPoint.y] = EndPipe()
+  
+  for i,lamp in next,level.lamps,nil do
+    pipesMatrix[lamp.point.x][lamp.point.y] = lamp
+  end 
 end
 
 function generatePipe()
@@ -112,6 +128,7 @@ function usePipe()
     if possiblePipe:is_a( StartPipe ) or
       possiblePipe:is_a( EndPipe ) or
       possiblePipe == updatable or
+      possiblePipe:is_a( Lamp ) or
       possiblePipe.filled then
         return
     end
@@ -130,11 +147,9 @@ function usePipe()
 end
 
 function startFlowingWater()
-  print("startFlowingWater")
   local pipe = getPipeFromMatrix(level.startPoint.x, level.startPoint.y-1)
   if pipe and pipe:acceptWaterFrom(0,-1) then
     pipe:waterFrom(0,-1)
-    print("i have a pipe")
     updatable = pipe 
   else
     gameLost()
@@ -142,14 +157,13 @@ function startFlowingWater()
 end
 
 function flowToPipe()
-  print("flowToPipe")
   local x, y = updatable:getOffsetForNextPipe()
   local pipe = getPipeFromMatrix(updatable.x + x, updatable.y + y)
   if pipe and pipe:acceptWaterFrom(x, y) then
     if pipe:is_a(EndPipe) then
-      levelWon()      
+      level:checkResult()      
     else
-      updatable:filledWithWater()
+      --updatable:filledWithWater()
       updatable = pipe 
       updatable:waterFrom(x, y)
     end
@@ -181,6 +195,14 @@ function love.keypressed(key, isrepeat)
   if key == "escape" then
       
       love.event.quit()
+  end
+  
+  if key == "return" and wonLevel then
+      generateLevel()
+  end
+  
+  if key == "return" and lost then
+      generateLevel()
   end
   
   if key == "l" then
@@ -222,16 +244,27 @@ function love.draw()
     pipe:draw()
   end
   
-  -- player
- player:draw()
+  font = love.graphics.newFont( 30 )
+  love.graphics.setFont( font )
   
- camera:unset()
+  
+  
+  -- player
+  player:draw()
  
- love.graphics.draw(level.map.verticalPipeImage, 1100, 0)
- love.graphics.draw(level.map.verticalPipeImage, 1100 + 40, 80 + 40, math.pi/2, 1, 1, 40, 40)
- love.graphics.draw(level.map.verticalPipeImage, 1100 + 40, 80 + 40, 0, 1, 1, 40, 40)
- love.graphics.draw(level.map.leftUpPipeImage, 1100 + 40, 160 + 40, 0, -1, 1, 40, 40)
- love.graphics.draw(level.map.leftUpPipeImage, 1100 + 40, 240 + 40, 0, -1, -1, 40, 40)
- 
+  if showText then
+    love.graphics.setColor( { 255, 0, 0 } )
+    love.graphics.setFont( font )
+    if wonLevel then
+      love.graphics.printf("You won!\npress [enter] to continue", ( level.map.tileWidth * level.map.xSize )/2 - 300, ( level.map.tileHeight * level.map.ySize )/2, 600, "center" )
+    end
+  
+    if lost then
+      love.graphics.printf("You lost!\npress [enter] to restart level", ( level.map.tileWidth * level.map.xSize )/2 - 300, ( level.map.tileHeight * level.map.ySize )/2, 600, "center" )
+    end
+  end 
+    
+  camera:unset()
+
 end
 

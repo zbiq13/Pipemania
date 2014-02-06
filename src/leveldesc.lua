@@ -8,6 +8,8 @@ function readLevelDescs()
     xSize = 10,
     ySize = 8,
     startPoint = { x = 'random', y = 'random' },
+    endPoint = { x = 'random', y = 'random' },
+    lamps = {},
     initialTime = 100,
     pipeTime = 40,
     waterSpeed = 10,
@@ -26,7 +28,9 @@ function readLevelDescs()
     
     verticalPipeImageAnim = {},
     horizontalPipeImageAnim = {},    
-    downRightPipeImageAnim = {}
+    downRightPipeImageAnim = {},
+    
+    lampImage = love.graphics.newImage("img/lamps.png")
   }
   
   local animDir = love.filesystem.getDirectoryItems("img/pipe1anim")
