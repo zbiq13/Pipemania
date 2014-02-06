@@ -8,11 +8,22 @@ function Level:init(levelDesc)
   {
     xSize = levelDesc.xSize,
     ySize = levelDesc.ySize,
-    tileWidth = 40,
-    tileHeight = 40,
+    tileWidth = 80,
+    tileHeight = 80,
     tileImage = levelDesc.tileImage,
     startImage = levelDesc.startImage,
-    endImage = levelDesc.endImage    
+    endImage = levelDesc.endImage,    
+    backgroundImage = levelDesc.backgroundImage,
+    verticalPipeImage = levelDesc.verticalPipeImage,
+    horizontalPipeImage = levelDesc.horizontalPipeImage,
+    crossPipeImage = levelDesc.crossPipeImage,
+    leftUpPipeImage = levelDesc.leftUpPipeImage,
+    leftDownPipeImage = levelDesc.leftDownPipeImage,
+    upRightPipeImage = levelDesc.upRightPipeImage,
+    downRightPipeImage = levelDesc.downRightPipeImage,
+    
+    verticalPipeImageAnim = levelDesc.verticalPipeImageAnim,
+    horizontalPipeImageAnim = levelDesc.horizontalPipeImageAnim
   }
   
   self.startPoint = Point(levelDesc.startPoint, self.map.xSize, self.map.ySize)
@@ -27,6 +38,8 @@ function Level:init(levelDesc)
   self.pipeTime = levelDesc.pipeTime
   self.waterSpeed = levelDesc.waterSpeed
   self.initialTime = levelDesc.initialTime
+  
+  self.pipeSeq = 0
 end
 
 
@@ -38,11 +51,12 @@ end
 function Level:draw()
   
   love.graphics.reset()
-  for x=0, self.map.xSize - 1 do
+  love.graphics.draw(self.map.backgroundImage, x, y)
+  --[[for x=0, self.map.xSize - 1 do
     for y=0, self.map.ySize - 1 do
       love.graphics.draw(self.map.tileImage, x * self.map.tileWidth, y * self.map.tileHeight); 
     end
-  end
+  end]]--
   
   self.startPoint:drawWithImage(self.map.startImage, self.map.tileWidth, self.map.tileHeight)
   

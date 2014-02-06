@@ -8,6 +8,7 @@ require('pipedebug')
 
 
 function love.load()
+  love.window.setMode(1300, 700, {fullscreen=false, vsync=false, minwidth=800, minheight=600})
   math.randomseed(os.time())
   
   pipeTypes = {}
@@ -35,6 +36,11 @@ end
 function love.update(dt)
   if not lost and not wonLevel then
     updatable:update(dt)  
+    for i, pipe in pairs(pipesUsed) do
+      if pipe.filled then
+        pipe:update(dt)
+      end
+    end
   end
 end
 
@@ -72,7 +78,8 @@ function generateLevel()
 end
 
 function generatePipe()
-  table.insert(pipes, pipeTypes[math.random(1, table.getn(pipeTypes))]())
+  table.insert(pipes, pipeTypes[math.random(1, table.getn(pipeTypes))](level.pipeSeq))
+  level.pipeSeq = level.pipeSeq + 1
 end
 
 function getPipeFromMatrix(x, y)
@@ -111,16 +118,23 @@ function usePipe()
   end  
   
   local pipe = table.remove( pipes, 1 )
+  pipesUsed[ pipe.id ] = pipe;
   pipe:use( player.x, player.y )
-  table.insert( pipesUsed, pipe )
+  
+  usedAlreadyPipe = getPipeFromMatrix(player.x, player.y)
+  if usedAlreadyPipe then
+    pipesUsed[ usedAlreadyPipe.id ] = nil
+  end
   setPipeInMatrix(pipe, player.x, player.y)
   generatePipe()
 end
 
 function startFlowingWater()
+  print("startFlowingWater")
   local pipe = getPipeFromMatrix(level.startPoint.x, level.startPoint.y-1)
   if pipe and pipe:acceptWaterFrom(0,-1) then
     pipe:waterFrom(0,-1)
+    print("i have a pipe")
     updatable = pipe 
   else
     gameLost()
@@ -128,6 +142,7 @@ function startFlowingWater()
 end
 
 function flowToPipe()
+  print("flowToPipe")
   local x, y = updatable:getOffsetForNextPipe()
   local pipe = getPipeFromMatrix(updatable.x + x, updatable.y + y)
   if pipe and pipe:acceptWaterFrom(x, y) then
@@ -164,6 +179,7 @@ function love.keypressed(key, isrepeat)
    end  
  
   if key == "escape" then
+      
       love.event.quit()
   end
   

@@ -1,7 +1,8 @@
 require('util/class')
 
 Pipe = class(Updatable)
-function Pipe:init()
+function Pipe:init(id)
+  self.id = id
   self.x = 0
   self.y = 0
   self.color = { math.random(0, 255), math.random(0, 255), math.random(0, 255) } 
@@ -15,6 +16,7 @@ function Pipe:init()
   
   self.xWaterFrom = 0
   self.yWaterFrom = 0
+  
   
   self.filled = false
 end
@@ -37,24 +39,33 @@ function Pipe:drawAsAvailable(index)
   end
 
 function Pipe:drawPipe(x, y)
-  love.graphics.setColor(self.color)
-  love.graphics.rectangle('fill', x, y, level.map.tileWidth, level.map.tileHeight)
+  --love.graphics.setColor(self.color)
+  --love.graphics.rectangle('fill', x, y, level.map.tileWidth, level.map.tileHeight)
 end
 
 function Pipe:update(dt)
-  if self.time > 0 then
-    self.time = self.time - self.speed * dt
-    self:flipColor()    
-  else
-    self.color = self.waterColor
-    flowToPipe(); 
-  end 
+  self.time = self.time - self.speed * dt       
+  
+  if self.time <= 0 and not self.filled then
+    self.filled = true
+    flowToPipe() 
+  end
+  
+  --print("przed animacja id "..self.id)
+  self:animate()  
 end
 
-function Pipe:flipColor()
-  self.color = self.color1
-  self.color1 = self.color2
-  self.color2 = self.color
+function Pipe:animate()
+  if self.animationImages then
+    local animationIndex = table.getn( self.animationImages ) - math.floor( math.abs( self.time ) / self.animThreshold )
+    self.oldAnimationIndex = animationIndex; 
+    if not self.filled then
+      self.animation = self.animationImages[ animationIndex ]
+    else
+      self.animation = self.animationImages[ table.getn( self.animationImages ) - math.fmod( animationIndex, 2 ) - 1 ]
+    end    
+  end
+  --print("generic animate")
 end
 
 function Pipe:waterFrom(x, y)
@@ -71,6 +82,11 @@ end
 
 
 HorizontalPipe = class( Pipe )
+function HorizontalPipe:init(id)
+  Pipe.init(self, id)
+  self.animationImages = level.map.horizontalPipeImageAnim
+  self.animThreshold = math.floor( level.pipeTime / ( table.getn( self.animationImages ) - 1 ) )  
+end
 
 function HorizontalPipe:getOffsetForNextPipe()
  return self.xWaterFrom, 0
@@ -80,15 +96,24 @@ function HorizontalPipe:acceptWaterFrom(x, y)
   return y == 0
 end
 
-function HorizontalPipe:drawPipe(x, y)
-  love.graphics.setColor(self.color)
+function HorizontalPipe:drawPipe(x, y)  
+  love.graphics.draw(level.map.horizontalPipeImage, x, y)
+  if self.animation then    
+    love.graphics.draw(self.animation, x, y)
+  end
+  --[[love.graphics.setColor(self.color)
   love.graphics.rectangle('fill', x, y, level.map.tileWidth, level.map.tileHeight)
   love.graphics.setColor( {0, 0, 0} )
-  love.graphics.line(x, y + (level.map.tileHeight / 2), x + level.map.tileWidth , y + (level.map.tileHeight / 2) )
+  love.graphics.line(x, y + (level.map.tileHeight / 2), x + level.map.tileWidth , y + (level.map.tileHeight / 2) )]]--
 end
 
 
 VerticalPipe = class( Pipe )
+function VerticalPipe:init(id)
+  Pipe.init(self, id)
+  self.animationImages = level.map.verticalPipeImageAnim
+  self.animThreshold = math.floor( level.pipeTime / ( table.getn( self.animationImages ) - 1 ) )  
+end
 
 function VerticalPipe:acceptWaterFrom(x, y)
   return x == 0
@@ -99,12 +124,16 @@ function VerticalPipe:getOffsetForNextPipe()
 end
 
 function VerticalPipe:drawPipe(x, y)
-  love.graphics.setColor(self.color)
+  --love.graphics.setColor({ 100, 100, 100 })
+  love.graphics.draw(level.map.verticalPipeImage, x, y)
+  if self.animation then    
+    love.graphics.draw(self.animation, x, y)
+  end
+  --[[love.graphics.setColor(self.color)
   love.graphics.rectangle('fill', x, y, level.map.tileWidth, level.map.tileHeight)
   love.graphics.setColor( {0, 0, 0} )
-  love.graphics.line(x + (level.map.tileWidth / 2), y, x + (level.map.tileWidth / 2) , y + level.map.tileHeight )
+  love.graphics.line(x + (level.map.tileWidth / 2), y, x + (level.map.tileWidth / 2) , y + level.map.tileHeight )]]--
 end
-
 
 CrossPipe = class( Pipe )
 
@@ -113,11 +142,12 @@ function CrossPipe:acceptWaterFrom(x, y)
 end
 
 function CrossPipe:drawPipe(x, y)
-  love.graphics.setColor(self.color)
+  love.graphics.draw(level.map.crossPipeImage, x, y)
+  --[[love.graphics.setColor(self.color)
   love.graphics.rectangle('fill', x, y, level.map.tileWidth, level.map.tileHeight)
   love.graphics.setColor( {0, 0, 0} )
   love.graphics.line(x + (level.map.tileWidth / 2), y, x + (level.map.tileWidth / 2) , y + level.map.tileHeight )
-  love.graphics.line(x, y + (level.map.tileHeight / 2), x + level.map.tileWidth , y + (level.map.tileHeight / 2) )
+  love.graphics.line(x, y + (level.map.tileHeight / 2), x + level.map.tileWidth , y + (level.map.tileHeight / 2) )]]--
 end
 
 function CrossPipe:getOffsetForNextPipe()
@@ -138,10 +168,12 @@ function AngleLeftUpPipe:getOffsetForNextPipe()
 end
 
 function AngleLeftUpPipe:drawPipe(x, y)
-  love.graphics.setColor(self.color)
+  
+  love.graphics.draw(level.map.leftUpPipeImage, x, y)
+  --[[love.graphics.setColor(self.color)
   love.graphics.rectangle('fill', x, y, level.map.tileWidth, level.map.tileHeight)
   love.graphics.setColor( {0, 0, 0} )
-  love.graphics.line(x, y + (level.map.tileHeight / 2), x + (level.map.tileWidth / 2) , y + (level.map.tileHeight / 2), x + (level.map.tileWidth / 2), y )
+  love.graphics.line(x, y + (level.map.tileHeight / 2), x + (level.map.tileWidth / 2) , y + (level.map.tileHeight / 2), x + (level.map.tileWidth / 2), y )]]--
 end
 
 
@@ -159,10 +191,12 @@ function AngleLeftDownPipe:getOffsetForNextPipe()
 end
 
 function AngleLeftDownPipe:drawPipe(x, y)
-  love.graphics.setColor(self.color)
+  
+  love.graphics.draw(level.map.leftDownPipeImage, x, y)
+  --[[love.graphics.setColor(self.color)
   love.graphics.rectangle('fill', x, y, level.map.tileWidth, level.map.tileHeight)
   love.graphics.setColor( {0, 0, 0} )
-  love.graphics.line(x, y + (level.map.tileHeight / 2), x + (level.map.tileWidth / 2) , y + (level.map.tileHeight / 2), x + (level.map.tileWidth / 2), y + level.map.tileHeight )
+  love.graphics.line(x, y + (level.map.tileHeight / 2), x + (level.map.tileWidth / 2) , y + (level.map.tileHeight / 2), x + (level.map.tileWidth / 2), y + level.map.tileHeight )]]--
 end
 
 
@@ -180,10 +214,12 @@ function AngleUpRightPipe:getOffsetForNextPipe()
 end
 
 function AngleUpRightPipe:drawPipe(x, y)
-  love.graphics.setColor(self.color)
+  
+  love.graphics.draw(level.map.upRightPipeImage, x, y)
+  --[[love.graphics.setColor(self.color)
   love.graphics.rectangle('fill', x, y, level.map.tileWidth, level.map.tileHeight)
   love.graphics.setColor( {0, 0, 0} )
-  love.graphics.line(x + (level.map.tileWidth / 2), y, x + (level.map.tileWidth / 2) , y + (level.map.tileHeight / 2), x + level.map.tileWidth, y  + (level.map.tileHeight / 2) )
+  love.graphics.line(x + (level.map.tileWidth / 2), y, x + (level.map.tileWidth / 2) , y + (level.map.tileHeight / 2), x + level.map.tileWidth, y  + (level.map.tileHeight / 2) )]]--
 end
 
 
@@ -201,10 +237,12 @@ function AngleDownRightPipe:getOffsetForNextPipe()
 end
 
 function AngleDownRightPipe:drawPipe(x, y)
-  love.graphics.setColor(self.color)
+  
+  love.graphics.draw(level.map.downRightPipeImage, x, y)
+  --[[love.graphics.setColor(self.color)
   love.graphics.rectangle('fill', x, y, level.map.tileWidth, level.map.tileHeight)
   love.graphics.setColor( {0, 0, 0} )
-  love.graphics.line(x + (level.map.tileWidth / 2), y + level.map.tileHeight, x + (level.map.tileWidth / 2) , y + (level.map.tileHeight / 2), x + level.map.tileWidth, y  + (level.map.tileHeight / 2) )
+  love.graphics.line(x + (level.map.tileWidth / 2), y + level.map.tileHeight, x + (level.map.tileWidth / 2) , y + (level.map.tileHeight / 2), x + level.map.tileWidth, y  + (level.map.tileHeight / 2) )]]--
 end
 
 
