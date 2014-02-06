@@ -25,8 +25,8 @@ function readLevelDescs()
     downRightPipeImage = love.graphics.newImage( "img/pipe4.png" ),
     
     verticalPipeImageAnim = {},
-    horizontalPipeImageAnim = {}    
-
+    horizontalPipeImageAnim = {},    
+    downRightPipeImageAnim = {}
   }
   
   local animDir = love.filesystem.getDirectoryItems("img/pipe1anim")
@@ -37,6 +37,11 @@ function readLevelDescs()
   animDir = love.filesystem.getDirectoryItems("img/pipe2anim")
   for k, file in ipairs(animDir) do
     table.insert(defaultLevel.horizontalPipeImageAnim, love.graphics.newImage("img/pipe2anim/"..file) )
+  end
+  
+  animDir = love.filesystem.getDirectoryItems("img/pipe4anim")
+  for k, file in ipairs(animDir) do
+    table.insert(defaultLevel.downRightPipeImageAnim, love.graphics.newImage("img/pipe4anim/"..file) )
   end
   
   levelDescsDir = love.filesystem.getDirectoryItems("levels")

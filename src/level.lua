@@ -23,7 +23,8 @@ function Level:init(levelDesc)
     downRightPipeImage = levelDesc.downRightPipeImage,
     
     verticalPipeImageAnim = levelDesc.verticalPipeImageAnim,
-    horizontalPipeImageAnim = levelDesc.horizontalPipeImageAnim
+    horizontalPipeImageAnim = levelDesc.horizontalPipeImageAnim,
+    downRightPipeImageAnim = levelDesc.downRightPipeImageAnim
   }
   
   self.startPoint = Point(levelDesc.startPoint, self.map.xSize, self.map.ySize)

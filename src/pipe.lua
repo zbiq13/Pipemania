@@ -224,6 +224,11 @@ end
 
 
 AngleDownRightPipe = class( Pipe )
+function AngleDownRightPipe:init(id)
+  Pipe.init(self, id)
+  self.animationImages = level.map.downRightPipeImageAnim
+  self.animThreshold = math.floor( level.pipeTime / ( table.getn( self.animationImages ) - 1 ) )  
+end
 
 function AngleDownRightPipe:acceptWaterFrom(x, y)
   return x == -1 or y == -1
@@ -239,6 +244,9 @@ end
 function AngleDownRightPipe:drawPipe(x, y)
   
   love.graphics.draw(level.map.downRightPipeImage, x, y)
+  if self.animation then    
+    love.graphics.draw(self.animation, x, y)
+  end
   --[[love.graphics.setColor(self.color)
   love.graphics.rectangle('fill', x, y, level.map.tileWidth, level.map.tileHeight)
   love.graphics.setColor( {0, 0, 0} )
