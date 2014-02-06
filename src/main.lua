@@ -5,6 +5,7 @@ require('level')
 require('player')
 require('pipe')
 require('lamp')
+require('enemy')
 require('pipedebug')
 require('goalinfo')
 
@@ -16,6 +17,7 @@ function love.load()
   debugFont = love.graphics.newFont( 12 )
   showText = false
   blinkRate = 10
+  blinkSpeed = 25
   blink = blinkRate
   
   pipeTypes = {}
@@ -42,14 +44,22 @@ end
 
 function love.update(dt)
   if not lost and not wonLevel then
+    
+    --update pipes
     updatable:update(dt)  
     for i, pipe in pairs(pipesUsed) do
       if pipe.filled then
         pipe:update(dt)
       end
     end
+       
+    --update enemies
+    for i, enemy in next,level.enemies,nil do
+        enemy:update(dt)      
+    end
+    
   else
-    blink = blink - dt * 25
+    blink = blink - dt * blinkSpeed
     if blink < 0 then
       blink = blinkRate
       showText = not showText
@@ -91,6 +101,10 @@ function generateLevel()
   for i,lamp in next,level.lamps,nil do
     pipesMatrix[lamp.point.x][lamp.point.y] = lamp
   end 
+  
+  for i,enemy in next,level.enemies,nil do
+    pipesMatrix[enemy.point.x][enemy.point.y] = enemy
+  end
 end
 
 function generatePipe()
@@ -129,6 +143,7 @@ function usePipe()
       possiblePipe:is_a( EndPipe ) or
       possiblePipe == updatable or
       possiblePipe:is_a( Lamp ) or
+      possiblePipe:is_a( Enemy ) or
       possiblePipe.filled then
         return
     end

@@ -2,6 +2,7 @@ require('util/class')
 require('point')
 require('lamp')
 require('goal')
+require('enemy')
 
 
 Level = class()
@@ -28,7 +29,10 @@ function Level:init(levelDesc)
     horizontalPipeImageAnim = levelDesc.horizontalPipeImageAnim,
     downRightPipeImageAnim = levelDesc.downRightPipeImageAnim,
     
-    lampImage = levelDesc.lampImage
+    lampImage = levelDesc.lampImage,
+    
+    enemiesNo = levelDesc.enemiesNo,
+    enemyImageAnim = levelDesc.enemyImageAnim
   }
   
   self.startPoint = Point(levelDesc.startPoint, self.map.xSize, self.map.ySize)
@@ -40,6 +44,11 @@ function Level:init(levelDesc)
   self.lamps = {}
   for i, lampDesc in next, levelDesc.lamps, nil do
     table.insert(self.lamps, Lamp(lampDesc))
+  end 
+  
+  self.enemies = {}
+  for i = 1, self.map.enemiesNo do
+    table.insert(self.enemies, Enemy())
   end 
   
   self.startColor = { 0, 0, 0 }
@@ -98,5 +107,9 @@ function Level:draw()
   
   for i, lamp in next,self.lamps,nil do
     lamp:draw()
+  end 
+  
+  for i, enemy in next,self.enemies,nil do
+    enemy:draw()
   end 
 end
