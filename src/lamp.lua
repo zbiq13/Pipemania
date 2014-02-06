@@ -35,6 +35,7 @@ function Lamp:update(dt)
   
   if self.time <= 0 and not self.lighted then
     self.lighted = true
+    level.lampsGoal:lampLighted()
     flowToPipe() 
   end
   

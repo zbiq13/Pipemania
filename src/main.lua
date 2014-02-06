@@ -6,7 +6,7 @@ require('player')
 require('pipe')
 require('lamp')
 require('pipedebug')
-
+require('goalinfo')
 
 function love.load()
   love.window.setMode(1300, 700, {fullscreen=false, vsync=false, minwidth=800, minheight=600})
@@ -161,6 +161,7 @@ function flowToPipe()
   local pipe = getPipeFromMatrix(updatable.x + x, updatable.y + y)
   if pipe and pipe:acceptWaterFrom(x, y) then
     if pipe:is_a(EndPipe) then
+      level:endPointReached()
       level:checkResult()      
     else
       --updatable:filledWithWater()
@@ -233,6 +234,7 @@ function love.draw()
   
   watertimer:draw()
   printDebug()
+  printGoalInfo()
   
   
   camera:set()

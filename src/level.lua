@@ -1,6 +1,7 @@
 require('util/class')
 require('point')
 require('lamp')
+require('goal')
 
 
 Level = class()
@@ -46,7 +47,19 @@ function Level:init(levelDesc)
   self.waterSpeed = levelDesc.waterSpeed
   self.initialTime = levelDesc.initialTime
   
+  self.lampsLighted = 0
+  
   self.pipeSeq = 0
+  
+  --goals
+  self.goals = {}
+  self.endPointGoal = EndPointGoal()
+  self.lampsGoal = LampsGoal(table.getn(self.lamps))  
+  table.insert( self.goals, self.endPointGoal )  
+  
+  if self.lampsGoal.lampsNo > 0 then
+    table.insert( self.goals, self.lampsGoal )
+  end  
 end
 
 
@@ -55,14 +68,19 @@ function Level:canPassWallAt(x, y)
 end
 
 
+function Level:endPointReached()
+  self.endPointGoal.achieved = true  
+end
+
+
 function Level:checkResult()
-  local lampsLighted = true
+  local goalsAchieved = true
   
-  for i, lamp in next,self.lamps,nil do
-    lampsLighted = lampsLighted and lamp.lighted
+  for i, goal in next,self.goals,nil do
+    goalsAchieved = goalsAchieved and goal.achieved
   end 
   
-  if lampsLighted then
+  if goalsAchieved then
     levelWon()
   else
     gameLost()
