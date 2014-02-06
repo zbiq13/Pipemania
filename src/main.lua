@@ -221,10 +221,17 @@ function love.draw()
   for i, pipe in pairs(pipesUsed) do
     pipe:draw()
   end
- 
- -- player
+  
+  -- player
  player:draw()
   
  camera:unset()
+ 
+ love.graphics.draw(level.map.verticalPipeImage, 1100, 0)
+ love.graphics.draw(level.map.verticalPipeImage, 1100 + 40, 80 + 40, math.pi/2, 1, 1, 40, 40)
+ love.graphics.draw(level.map.verticalPipeImage, 1100 + 40, 80 + 40, 0, 1, 1, 40, 40)
+ love.graphics.draw(level.map.leftUpPipeImage, 1100 + 40, 160 + 40, 0, -1, 1, 40, 40)
+ love.graphics.draw(level.map.leftUpPipeImage, 1100 + 40, 240 + 40, 0, -1, -1, 40, 40)
+ 
 end
 

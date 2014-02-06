@@ -17,6 +17,8 @@ function Pipe:init(id)
   self.xWaterFrom = 0
   self.yWaterFrom = 0
   
+  self.animationOrientation = 0
+  
   
   self.filled = false
 end
@@ -39,8 +41,22 @@ function Pipe:drawAsAvailable(index)
   end
 
 function Pipe:drawPipe(x, y)
-  --love.graphics.setColor(self.color)
-  --love.graphics.rectangle('fill', x, y, level.map.tileWidth, level.map.tileHeight)
+  love.graphics.draw(self.image, x, y)
+  if self.animation then    
+    love.graphics.draw(self.animation, x + level.map.tileWidth/2, y + level.map.tileHeight/2, self:getAnimationRotation(), self:getAnimationScaleX(), self:getAnimationScaleY(), level.map.tileWidth/2, level.map.tileHeight/2)
+  end
+end
+
+function Pipe:getAnimationRotation()
+  return 0
+end
+
+function Pipe:getAnimationScaleX()
+  return 1
+end
+
+function Pipe:getAnimationScaleY()
+  return 1
 end
 
 function Pipe:update(dt)
@@ -51,21 +67,16 @@ function Pipe:update(dt)
     flowToPipe() 
   end
   
-  --print("przed animacja id "..self.id)
   self:animate()  
 end
 
 function Pipe:animate()
-  if self.animationImages then
-    local animationIndex = table.getn( self.animationImages ) - math.floor( math.abs( self.time ) / self.animThreshold )
-    self.oldAnimationIndex = animationIndex; 
-    if not self.filled then
-      self.animation = self.animationImages[ animationIndex ]
-    else
-      self.animation = self.animationImages[ table.getn( self.animationImages ) - math.fmod( animationIndex, 2 ) - 1 ]
-    end    
-  end
-  --print("generic animate")
+  local animationIndex = table.getn( self.animationImages ) - math.floor( math.abs( self.time ) / self.animThreshold )
+  if not self.filled then
+    self.animation = self.animationImages[ animationIndex ]
+  else
+    self.animation = self.animationImages[ table.getn( self.animationImages ) - math.fmod( math.abs( animationIndex ), 2 ) ]
+  end    
 end
 
 function Pipe:waterFrom(x, y)
@@ -84,6 +95,7 @@ end
 HorizontalPipe = class( Pipe )
 function HorizontalPipe:init(id)
   Pipe.init(self, id)
+  self.image = level.map.horizontalPipeImage
   self.animationImages = level.map.horizontalPipeImageAnim
   self.animThreshold = math.floor( level.pipeTime / ( table.getn( self.animationImages ) - 1 ) )  
 end
@@ -96,21 +108,17 @@ function HorizontalPipe:acceptWaterFrom(x, y)
   return y == 0
 end
 
-function HorizontalPipe:drawPipe(x, y)  
-  love.graphics.draw(level.map.horizontalPipeImage, x, y)
-  if self.animation then    
-    love.graphics.draw(self.animation, x, y)
-  end
-  --[[love.graphics.setColor(self.color)
-  love.graphics.rectangle('fill', x, y, level.map.tileWidth, level.map.tileHeight)
-  love.graphics.setColor( {0, 0, 0} )
-  love.graphics.line(x, y + (level.map.tileHeight / 2), x + level.map.tileWidth , y + (level.map.tileHeight / 2) )]]--
+function HorizontalPipe:getAnimationScaleX()
+  if self.xWaterFrom == -1 then 
+    return -1
+  end  
 end
 
-
+-------------------------------------
 VerticalPipe = class( Pipe )
 function VerticalPipe:init(id)
   Pipe.init(self, id)
+  self.image = level.map.verticalPipeImage
   self.animationImages = level.map.verticalPipeImageAnim
   self.animThreshold = math.floor( level.pipeTime / ( table.getn( self.animationImages ) - 1 ) )  
 end
@@ -123,38 +131,111 @@ function VerticalPipe:getOffsetForNextPipe()
  return 0, self.yWaterFrom
 end
 
-function VerticalPipe:drawPipe(x, y)
-  --love.graphics.setColor({ 100, 100, 100 })
-  love.graphics.draw(level.map.verticalPipeImage, x, y)
-  if self.animation then    
-    love.graphics.draw(self.animation, x, y)
+function VerticalPipe:getAnimationScaleY()
+  if self.yWaterFrom == -1 then 
+    return 1
   end
-  --[[love.graphics.setColor(self.color)
-  love.graphics.rectangle('fill', x, y, level.map.tileWidth, level.map.tileHeight)
-  love.graphics.setColor( {0, 0, 0} )
-  love.graphics.line(x + (level.map.tileWidth / 2), y, x + (level.map.tileWidth / 2) , y + level.map.tileHeight )]]--
+  
+  return -1
 end
 
+-------------------------------------
 CrossPipe = class( Pipe )
+function CrossPipe:init(id)
+  Pipe.init(self, id)
+  self.image = level.map.crossPipeImage
+  self.vFilled = false
+  self.vAnimationEnable = false
+  self.vAnimationImages = level.map.verticalPipeImageAnim
+  self.vAnimThreshold = math.floor( level.pipeTime / ( table.getn( self.vAnimationImages ) - 1 ) )
+  self.hFilled = false
+  self.hAnimationEnable = false  
+  self.hAnimationImages = level.map.horizontalPipeImageAnim
+  self.hAnimThreshold = math.floor( level.pipeTime / ( table.getn( self.hAnimationImages ) - 1 ) )  
+end
 
 function CrossPipe:acceptWaterFrom(x, y)
   return true
-end
-
-function CrossPipe:drawPipe(x, y)
-  love.graphics.draw(level.map.crossPipeImage, x, y)
-  --[[love.graphics.setColor(self.color)
-  love.graphics.rectangle('fill', x, y, level.map.tileWidth, level.map.tileHeight)
-  love.graphics.setColor( {0, 0, 0} )
-  love.graphics.line(x + (level.map.tileWidth / 2), y, x + (level.map.tileWidth / 2) , y + level.map.tileHeight )
-  love.graphics.line(x, y + (level.map.tileHeight / 2), x + level.map.tileWidth , y + (level.map.tileHeight / 2) )]]--
 end
 
 function CrossPipe:getOffsetForNextPipe()
  return self.xWaterFrom, self.yWaterFrom
 end
 
-AngleLeftUpPipe = class( Pipe )
+function CrossPipe:waterFrom(x, y)
+  Pipe.waterFrom(self, x, y)
+  if x ~= 0 then 
+    self.hAnimationEnable = true
+    self.hScale = x;
+  elseif y ~= 0 then 
+    self.vAnimationEnable = true
+    self.vScale = -y;
+  end  
+end
+
+function CrossPipe:drawPipe(x, y)
+  love.graphics.draw(self.image, x, y)
+  if self.vAnimation then    
+    love.graphics.draw(self.vAnimation, x + level.map.tileWidth/2, y + level.map.tileHeight/2, 0, 1, self.vScale, level.map.tileWidth/2, level.map.tileHeight/2)
+  end
+  if self.hAnimation then    
+    love.graphics.draw(self.hAnimation, x + level.map.tileWidth/2, y + level.map.tileHeight/2, 0, self.hScale, 1, level.map.tileWidth/2, level.map.tileHeight/2)
+  end
+end
+
+function CrossPipe:update(dt)
+  self.time = self.time - self.speed * dt       
+  
+  if self.xWaterFrom ~= 0 then
+    if self.time <= 0 and not self.hFilled then
+      self.filled = true 
+      self.hFilled = true
+      flowToPipe()
+    end 
+  end
+  
+  if self.yWaterFrom ~= 0 then
+    if self.time <= 0 and not self.vFilled then
+      self.filled = true 
+      self.vFilled = true
+      flowToPipe()
+    end 
+  end
+  
+  if self.vAnimationEnable then
+    self.vAnimation = self:animate(self.vAnimationImages, self.vAnimThreshold, self.vFilled)  
+  end
+  
+  if self.hAnimationEnable then
+    self.hAnimation = self:animate(self.hAnimationImages, self.hAnimThreshold, self.hFilled)  
+  end
+end
+
+function CrossPipe:animate(images, thresold, filled)
+  local animationIndex = table.getn( images ) - math.floor( math.abs( self.time ) / thresold )
+ 
+    if not filled then
+      return images[ animationIndex ]
+    else
+      return images[ table.getn( images ) - math.fmod( animationIndex, 2 ) - 1 ]
+    end    
+end
+
+
+-------------------------------------
+AnglePipe = class( Pipe )
+function AnglePipe:init(id)
+  Pipe.init(self, id)
+  self.animationImages = level.map.downRightPipeImageAnim
+  self.animThreshold = math.floor( level.pipeTime / ( table.getn( self.animationImages ) - 1 ) )  
+end
+
+-------------------------------------
+AngleLeftUpPipe = class( AnglePipe )
+function AngleLeftUpPipe:init(id)
+  AnglePipe.init(self, id)
+  self.image = level.map.leftUpPipeImage
+end
 
 function AngleLeftUpPipe:acceptWaterFrom(x, y)
   return x == 1 or y == 1
@@ -167,17 +248,33 @@ function AngleLeftUpPipe:getOffsetForNextPipe()
  return -1, 0
 end
 
-function AngleLeftUpPipe:drawPipe(x, y)
-  
-  love.graphics.draw(level.map.leftUpPipeImage, x, y)
-  --[[love.graphics.setColor(self.color)
-  love.graphics.rectangle('fill', x, y, level.map.tileWidth, level.map.tileHeight)
-  love.graphics.setColor( {0, 0, 0} )
-  love.graphics.line(x, y + (level.map.tileHeight / 2), x + (level.map.tileWidth / 2) , y + (level.map.tileHeight / 2), x + (level.map.tileWidth / 2), y )]]--
+function AngleLeftUpPipe:getAnimationScaleY()
+  return -1
 end
 
+function AngleLeftUpPipe:getAnimationScaleX()
+  if self.yWaterFrom == 1 then
+    return -1
+  end
+  
+  return 1
+end
 
-AngleLeftDownPipe = class( Pipe )
+function AngleLeftUpPipe:getAnimationRotation()
+  if self.xWaterFrom == 1 then
+    return -math.pi/2
+  end
+  
+  return 0
+end
+
+-------------------------------------
+AngleLeftDownPipe = class( AnglePipe )
+function AngleLeftDownPipe:init(id)
+  AnglePipe.init(self, id)
+  self.image = level.map.leftDownPipeImage
+end
+
 
 function AngleLeftDownPipe:acceptWaterFrom(x, y)
   return x == 1 or y == -1
@@ -190,17 +287,28 @@ function AngleLeftDownPipe:getOffsetForNextPipe()
  return -1, 0
 end
 
-function AngleLeftDownPipe:drawPipe(x, y)
+function AngleLeftDownPipe:getAnimationScaleX()
+  if self.yWaterFrom == -1 then
+    return -1
+  end
   
-  love.graphics.draw(level.map.leftDownPipeImage, x, y)
-  --[[love.graphics.setColor(self.color)
-  love.graphics.rectangle('fill', x, y, level.map.tileWidth, level.map.tileHeight)
-  love.graphics.setColor( {0, 0, 0} )
-  love.graphics.line(x, y + (level.map.tileHeight / 2), x + (level.map.tileWidth / 2) , y + (level.map.tileHeight / 2), x + (level.map.tileWidth / 2), y + level.map.tileHeight )]]--
+  return 1
 end
 
+function AngleLeftDownPipe:getAnimationRotation()
+  if self.xWaterFrom == 1 then 
+    return math.pi/2
+  end
+  
+  return 0
+end
 
-AngleUpRightPipe = class( Pipe )
+-------------------------------------
+AngleUpRightPipe = class( AnglePipe )
+function AngleUpRightPipe:init(id)
+  AnglePipe.init(self, id)
+  self.image = level.map.upRightPipeImage
+end
 
 function AngleUpRightPipe:acceptWaterFrom(x, y)
   return x == -1 or y == 1
@@ -213,21 +321,28 @@ function AngleUpRightPipe:getOffsetForNextPipe()
  return 1, 0
 end
 
-function AngleUpRightPipe:drawPipe(x, y)
+function AngleUpRightPipe:getAnimationScaleY()
+  if self.yWaterFrom == 1 then
+    return -1
+  end
   
-  love.graphics.draw(level.map.upRightPipeImage, x, y)
-  --[[love.graphics.setColor(self.color)
-  love.graphics.rectangle('fill', x, y, level.map.tileWidth, level.map.tileHeight)
-  love.graphics.setColor( {0, 0, 0} )
-  love.graphics.line(x + (level.map.tileWidth / 2), y, x + (level.map.tileWidth / 2) , y + (level.map.tileHeight / 2), x + level.map.tileWidth, y  + (level.map.tileHeight / 2) )]]--
+  return 1
+end
+
+function AngleUpRightPipe:getAnimationRotation()
+  if self.xWaterFrom == -1 then 
+    return -math.pi/2
+  end
+  
+  return 0
 end
 
 
-AngleDownRightPipe = class( Pipe )
+-------------------------------------
+AngleDownRightPipe = class( AnglePipe )
 function AngleDownRightPipe:init(id)
-  Pipe.init(self, id)
-  self.animationImages = level.map.downRightPipeImageAnim
-  self.animThreshold = math.floor( level.pipeTime / ( table.getn( self.animationImages ) - 1 ) )  
+  AnglePipe.init(self, id)
+  self.image = level.map.downRightPipeImage
 end
 
 function AngleDownRightPipe:acceptWaterFrom(x, y)
@@ -241,19 +356,24 @@ function AngleDownRightPipe:getOffsetForNextPipe()
  return 1, 0
 end
 
-function AngleDownRightPipe:drawPipe(x, y)
-  
-  love.graphics.draw(level.map.downRightPipeImage, x, y)
-  if self.animation then    
-    love.graphics.draw(self.animation, x, y)
+function AngleDownRightPipe:getAnimationScaleY()
+  if self.xWaterFrom == -1 then
+    return -1
   end
-  --[[love.graphics.setColor(self.color)
-  love.graphics.rectangle('fill', x, y, level.map.tileWidth, level.map.tileHeight)
-  love.graphics.setColor( {0, 0, 0} )
-  love.graphics.line(x + (level.map.tileWidth / 2), y + level.map.tileHeight, x + (level.map.tileWidth / 2) , y + (level.map.tileHeight / 2), x + level.map.tileWidth, y  + (level.map.tileHeight / 2) )]]--
+  
+  return 1
+end
+
+function AngleDownRightPipe:getAnimationRotation()
+  if self.xWaterFrom == -1 then 
+    return math.pi/2
+  end
+  
+  return 0
 end
 
 
+-------------------------------------
 StartPipe = class( Pipe )
 
 function StartPipe:acceptWaterFrom(x, y)
