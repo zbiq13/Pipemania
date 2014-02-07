@@ -58,6 +58,11 @@ function love.update(dt)
         enemy:update(dt)      
     end
     
+    --update lamps
+    for i, lamp in next,lampsLighted,nil do
+        lamp:update(dt)      
+    end
+    
   else
     blink = blink - dt * blinkSpeed
     if blink < 0 then
@@ -84,6 +89,8 @@ function generateLevel()
   pipeIndex = 1;
   lost = false
   wonLevel = false
+  
+  lampsLighted = {}
   
   for i = 1, 5 do
     generatePipe()

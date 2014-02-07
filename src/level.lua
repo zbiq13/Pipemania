@@ -30,6 +30,7 @@ function Level:init(levelDesc)
     downRightPipeImageAnim = levelDesc.downRightPipeImageAnim,
     
     lampImage = levelDesc.lampImage,
+    lampImageAnim = levelDesc.lampImageAnim,
     
     enemiesNo = levelDesc.enemiesNo,
     enemyImageAnim = levelDesc.enemyImageAnim

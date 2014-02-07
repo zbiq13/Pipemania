@@ -9,11 +9,19 @@ function Lamp:init(lampDesc)
   self.image = level.map.lampImage
   self.time = level.pipeTime
   self.speed = level.waterSpeed
+  self.animationImages = level.map.lampImageAnim
+  self.animThreshold = math.floor( self.time / ( table.getn( self.animationImages ) - 1 ) )
+  self.animationFramesNo = table.getn( self.animationImages )
+  self.imageIndex = 1
+  self.animateRate = 5
+  self.animateSpeed= 75
+  self.blink = self.animateRate
   self.lighted = false
 end
 
 
 function Lamp:draw()
+  self.point:drawWithImage( level.map.verticalPipeImage )
   self.point:drawWithImage( self.image )
 end
 
@@ -36,13 +44,26 @@ function Lamp:update(dt)
   if self.time <= 0 and not self.lighted then
     self.lighted = true
     level.lampsGoal:lampLighted()
+    table.insert(lampsLighted,self)
     flowToPipe() 
   end
   
-  self:animate()  
+  self:animate(dt)  
 end
 
-function Lamp:animate()
+function Lamp:animate(dt)
+  self.blink = self.blink - dt * self.animateSpeed
+  if self.blink < 0 then
+    self.blink = self.animateRate
+    self.imageIndex = math.fmod(self.imageIndex, self.animationFramesNo) + 1
+    self.image = self.animationImages[ self.imageIndex ] 
+  end 
+    
+  --[[local animationIndex = self.animationFramesNo - math.floor( math.abs( self.time ) / self.animThreshold )
+  animationIndex = math.fmod(animationIndex, self.animationFramesNo) + 1
+  print("Index: "..animationIndex)
+  self.image = self.animationImages[ animationIndex ] ]]--
+   
 end
 
 function Lamp:getDebugString()

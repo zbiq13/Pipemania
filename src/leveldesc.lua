@@ -18,19 +18,20 @@ function readLevelDescs()
     endImage = love.graphics.newImage( "img/end.gif" ),
     backgroundImage = love.graphics.newImage( "img/background800640.png" ),
     
-    verticalPipeImage = love.graphics.newImage( "img/pipe1.png" ),
-    horizontalPipeImage = love.graphics.newImage( "img/pipe2.png" ),
-    crossPipeImage = love.graphics.newImage( "img/pipe3.png" ),
-    leftUpPipeImage = love.graphics.newImage( "img/pipe6.png" ),
-    leftDownPipeImage = love.graphics.newImage( "img/pipe7.png" ),
-    upRightPipeImage = love.graphics.newImage( "img/pipe5.png" ),
-    downRightPipeImage = love.graphics.newImage( "img/pipe4.png" ),
+    verticalPipeImage = love.graphics.newImage( "img/pipe/pipe1.png" ),
+    horizontalPipeImage = love.graphics.newImage( "img/pipe/pipe2.png" ),
+    crossPipeImage = love.graphics.newImage( "img/pipe/pipe3.png" ),
+    leftUpPipeImage = love.graphics.newImage( "img/pipe/pipe6.png" ),
+    leftDownPipeImage = love.graphics.newImage( "img/pipe/pipe7.png" ),
+    upRightPipeImage = love.graphics.newImage( "img/pipe/pipe5.png" ),
+    downRightPipeImage = love.graphics.newImage( "img/pipe/pipe4.png" ),
     
     verticalPipeImageAnim = {},
     horizontalPipeImageAnim = {},    
     downRightPipeImageAnim = {},
     
-    lampImage = love.graphics.newImage("img/lamps.png"),
+    lampImage = love.graphics.newImage("img/fan/fan5anim.png"),
+    lampImageAnim = {},
     
     enemiesNo = 0,
     enemyImageAnim = {},
@@ -56,6 +57,11 @@ function readLevelDescs()
   animDir = love.filesystem.getDirectoryItems("img/enemy")
   for k, file in ipairs(animDir) do
     table.insert(defaultLevel.enemyImageAnim, love.graphics.newImage("img/enemy/"..file) )
+  end
+  
+  animDir = love.filesystem.getDirectoryItems("img/fan")
+  for k, file in ipairs(animDir) do
+    table.insert(defaultLevel.lampImageAnim, love.graphics.newImage("img/fan/"..file) )
   end
   
   levelDescsDir = love.filesystem.getDirectoryItems("levels")
