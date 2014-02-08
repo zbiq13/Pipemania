@@ -18,6 +18,7 @@ function Watertimer:update( dt )
   if self.count >= self.threshold then
     self.count = 0
     self.lampsLighted = self.lampsLighted + 1
+    bulbOn:play()
   end
   
   
@@ -31,10 +32,11 @@ end
 function Watertimer:draw()
   for i=0,self.lampNo-1 do
     love.graphics.setColor(255,255,0)
-    if self.lampsLighted <= i then
-      love.graphics.reset()
-    end
-    love.graphics.draw(self.lamp, -self.level.map.tileWidth, i*self.level.map.tileHeight)
+    if self.lampsLighted > i then
+      love.graphics.draw(bulbOnImage, -self.level.map.tileWidth, i*self.level.map.tileHeight)
+    else
+      love.graphics.draw(bulbOffImage, -self.level.map.tileWidth, i*self.level.map.tileHeight)
+    end    
   end
 end
 

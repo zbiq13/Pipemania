@@ -40,6 +40,7 @@ function love.load()
   putPipe:setPitch(0.5)
   lostSound = love.audio.newSource("audio/lose.mp3")  
   babeTheme = love.audio.newSource("audio/babetheme.mp3")
+  bulbOn = love.audio.newSource("audio/bulbon.wav", "static")
   
   readLevelDescs()
   generateLevel()
@@ -65,6 +66,9 @@ function love.load()
   
   arrowRedImage = love.graphics.newImage("img/arrowred.png")
   arrowGreenImage = love.graphics.newImage("img/arrowgreen.png")
+  
+  bulbOnImage = love.graphics.newImage("img/bulbon.png")
+  bulbOffImage = love.graphics.newImage("img/bulboff.png")
   
   state = 'start'
   babeTheme:setLooping(true)
