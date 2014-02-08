@@ -2,7 +2,7 @@ require('util/class')
 
 function printGoalInfo()
   love.graphics.setFont(debugFont)
-  local y = 20;
+  local y = 100;
   for i,goal in next,level.goals,nil do
     goal:draw(width - 200, i * y)
   end

@@ -10,7 +10,7 @@ require('pipedebug')
 require('goalinfo')
 
 function love.load()
-  love.window.setMode(1300, 700, {fullscreen=false, vsync=false, minwidth=800, minheight=600})
+  love.window.setMode(1200, 700, {fullscreen=false, vsync=false, minwidth=800, minheight=600})
   
   math.randomseed(os.time())
   
@@ -21,6 +21,8 @@ function love.load()
   blinkSpeed = 25
   blink = blinkRate
   
+  babeScale = 1
+  
   pipeTypes = {}
   table.insert( pipeTypes, HorizontalPipe )
   table.insert( pipeTypes, VerticalPipe )
@@ -29,6 +31,13 @@ function love.load()
   table.insert( pipeTypes, AngleLeftDownPipe )
   table.insert( pipeTypes, AngleUpRightPipe )
   table.insert( pipeTypes, AngleDownRightPipe )
+  
+  --audio
+  electricWire = love.audio.newSource("audio/39542__the-bizniss__line-in-noise.wav", "static")
+  putPipe = love.audio.newSource("audio/putpipe.wav", "static")
+  putPipe:setPitch(0.5)
+  lostSound = love.audio.newSource("audio/lose.mp3")  
+  babeTheme = love.audio.newSource("audio/babetheme.mp3")
   
   readLevelDescs()
   generateLevel()
@@ -42,9 +51,12 @@ function love.load()
   love.keyboard.setKeyRepeat( true )
   camera:setPosition( -xStart, -yStart )
   
-  --audio
-  electricWire = love.audio.newSource("audio/39542__the-bizniss__line-in-noise.wav", "static")
-  lostSound = love.audio.newSource("audio/lose.mp3")  
+  startImage = love.graphics.newImage("img/startgame.png")
+  
+  state = 'start'
+  babeTheme:setLooping(true)
+  babeTheme:play()
+  
 end
 
 function love.update(dt)
@@ -78,6 +90,7 @@ function love.update(dt)
     if blink < 0 then
       blink = blinkRate
       showText = not showText
+      babeScale = - babeScale
     end    
   end
   
@@ -90,13 +103,14 @@ function generateLevel()
   end
   level = Level(levelDescs[1])
   --narazie zapetlam
-  table.insert(levelDescs, levelDescs[1])
-  table.remove(levelDescs, 1)
   player = Player(level)
   watertimer = Watertimer()
   updatable = watertimer
   pipes = {}
   pipeIndex = 1
+  
+  babeTheme:stop()
+  
   waterFlowing = false
   lost = false
   wonLevel = false
@@ -157,6 +171,9 @@ function setPipeInMatrix(pipe, x, y)
 end
 
 function usePipe()
+  if state ~= "playing" then
+    return
+  end
   
   -- check if usable
   local possiblePipe = getPipeFromMatrix(player.x, player.y);  
@@ -182,6 +199,8 @@ function usePipe()
   end
   setPipeInMatrix(pipe, player.x, player.y)
   generatePipe()
+  
+  putPipe:play()
 end
 
 function startFlowingWater()
@@ -208,14 +227,8 @@ function flowToPipe()
   local x, y = updatable:getOffsetForNextPipe()
   local pipe = getPipeFromMatrix(updatable.x + x, updatable.y + y)
   if pipe and pipe:acceptWaterFrom(x, y) then
-    --[[if pipe:is_a(EndPipe) then
-      level:endPointReached()
-      level:checkResult()      
-    else]]--
-      --updatable:filledWithWater()
       updatable = pipe 
       updatable:waterFrom(x, y)
-    --end
   else
     gameLost()
   end
@@ -226,15 +239,21 @@ function gameLost()
   lostSound:play()
   electricWire:stop()
   lost = true
+  state = 'gamelost'
   --todo
 end
 
 function levelWon()
   electricWire:stop()
+  babeTheme:setLooping(true)
+  babeTheme:play()
+    
   wonLevel = true
+  state = 'levelwon'
 end
 
 function gameWon()
+  state = 'gamewon'
   --todo
 end
 
@@ -246,19 +265,28 @@ function love.keypressed(key, isrepeat)
    end  
  
   if key == "escape" then
-      
       love.event.quit()
   end
   
-  if key == "return" and wonLevel then
-      generateLevel()
-  end
+  if key == "return" then
   
-  if key == "return" and lost then
+    if state == "start" then
+      babeTheme:stop()
+      state = "playing"
       generateLevel()
+    elseif state == "levelwon" then
+      state = "playing"
+      table.remove(levelDescs, 1)
+      generateLevel()
+    elseif state == "gamelost" then 
+      state = "playing"
+      generateLevel()
+    end
+    
   end
   
   if key == "l" then
+      state = "playing"
       generateLevel()
   end
   
@@ -278,51 +306,39 @@ end
 
 
 function love.draw()
-  love.graphics.setColor( 228, 219, 203 )
+  love.graphics.setColor( 208, 199, 183 )
   love.graphics.rectangle("fill",0,0,width,height)
   love.graphics.reset()
-  --draw available pieces
-  for i, pipe in pairs(pipes) do
-    pipe:drawAsAvailable( i )
+  
+  if state == "start" then
+    drawStart()
+  elseif state == "beforelevel" then
+    drawGoals()
+  elseif state == "playing" or state == "gamelost" then
+    level:draw()
+  elseif state == "levelwon" then
+    drawBabe()
   end
   
-  watertimer:draw()
-  printDebug()
-  printGoalInfo()
-  
-  
-  camera:set()
-  level:draw()
-  
-  startPipe:draw()
-  endPipe:draw()
-  
-  --draw used pieces
-  for i, pipe in pairs(pipesUsed) do
-    pipe:draw()
-  end
-  
-  font = love.graphics.newFont( 30 )
-  love.graphics.setFont( font )
-  
-  
-  
-  -- player
-  player:draw()
- 
-  if showText then
-    love.graphics.setColor( { 255, 0, 0 } )
-    love.graphics.setFont( font )
-    if wonLevel then
-      love.graphics.printf("You won!\npress [enter] to continue", ( level.map.tileWidth * level.map.xSize )/2 - 300, ( level.map.tileHeight * level.map.ySize )/2, 600, "center" )
-    end
-  
-    if lost then
-      love.graphics.printf("You lost!\npress [enter] to restart level", ( level.map.tileWidth * level.map.xSize )/2 - 300, ( level.map.tileHeight * level.map.ySize )/2, 600, "center" )
-    end
-  end 
-    
-  camera:unset()
-
 end
 
+
+function drawBabe()
+  love.graphics.draw(level.babeImage,width/2,0,0,babeScale,1,level.babeImage:getWidth()/2,0)
+  drawPressToContinue()
+end
+
+function drawGoals()
+  --love.graphics.draw(level.babeImage,200+275,350,0,babeScale,1,275,350)
+end
+
+function drawStart()
+  love.graphics.draw(startImage,width/2,0,0,1,1,startImage:getWidth()/2,0)
+  drawPressToContinue()
+end
+
+function drawPressToContinue()
+  love.graphics.setColor( { 255, 0, 0 } )
+  love.graphics.setFont( font )
+  love.graphics.printf("Press [enter] to continue", width - 625, height - 50, 600, "right" )
+end      

@@ -1,4 +1,4 @@
 return {
-    --waterSpeed = 20,
-    endPoint = { x = 'random', y = 'random' }
+    babeImage = love.graphics.newImage( "img/babes/laska2.png" ),
+    lamps = { { x = 'random', y = 'random' } }
 }

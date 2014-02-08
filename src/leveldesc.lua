@@ -37,6 +37,9 @@ function readLevelDescs()
     
     enemiesNo = 0,
     enemyImageAnim = {},
+    
+    
+    babeImage = love.graphics.newImage( "img/babes/laska.png" ),
    
     
     circlesNo = 0

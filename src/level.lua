@@ -59,6 +59,8 @@ function Level:init(levelDesc)
   self.waterSpeed = levelDesc.waterSpeed
   self.initialTime = levelDesc.initialTime
   
+  self.babeImage = levelDesc.babeImage
+  
   self.lampsLighted = 0
   
   self.pipeSeq = 0
@@ -107,18 +109,62 @@ end
 
 
 function Level:draw()
+
+    --draw available pieces
+    for i, pipe in pairs(pipes) do
+      pipe:drawAsAvailable( i )
+    end
+    
+    watertimer:draw()
+    --printDebug()
+    printGoalInfo()
+    
+    
+    camera:set()
+    love.graphics.reset()
+    love.graphics.draw(self.map.backgroundImage, x, y)
+    
+    --self.startPoint:drawWithImage(self.map.startImage)
+    --self.endPoint:drawWithImage(self.map.endImage)
+    
+    for i, lamp in next,self.lamps,nil do
+      lamp:draw()
+    end 
+    
+    for i, enemy in next,self.enemies,nil do
+      enemy:draw()
+    end    
+    startPipe:draw()
+    endPipe:draw()
+    
+    --draw used pieces
+    for i, pipe in pairs(pipesUsed) do
+      pipe:draw()
+    end
+    
+    font = love.graphics.newFont( 30 )
+    love.graphics.setFont( font )
+    
+    
+    
+    -- player
+    player:draw()
+   
+    if showText then
+      love.graphics.setColor( { 255, 0, 0 } )
+      love.graphics.setFont( font )
+      if wonLevel then
+        love.graphics.printf("You won!\npress [enter] to continue", ( level.map.tileWidth * level.map.xSize )/2 - 300, ( level.map.tileHeight * level.map.ySize )/2, 600, "center" )
+      end
+    
+      if lost then
+        love.graphics.printf("You lost!\npress [enter] to restart level", ( level.map.tileWidth * level.map.xSize )/2 - 300, ( level.map.tileHeight * level.map.ySize )/2, 600, "center" )
+      end
+    end 
+      
+    camera:unset()
+  --end
+
   
-  love.graphics.reset()
-  love.graphics.draw(self.map.backgroundImage, x, y)
-  
-  --self.startPoint:drawWithImage(self.map.startImage)
-  --self.endPoint:drawWithImage(self.map.endImage)
-  
-  for i, lamp in next,self.lamps,nil do
-    lamp:draw()
-  end 
-  
-  for i, enemy in next,self.enemies,nil do
-    enemy:draw()
-  end 
+ 
 end

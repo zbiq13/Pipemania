@@ -10,15 +10,19 @@ end
 EndPointGoal = class( Goal )
 function EndPointGoal:init()
   Goal.init(self)
+  self.arrow = love.graphics.newImage("img/arrow.png")
 end
 
 function EndPointGoal:draw(x, y)
-  love.graphics.setColor({ 255, 128, 0 })
+  --[[love.graphics.setColor({ 255, 128, 0 })
   if self.achieved then
     love.graphics.setColor({ 45, 252, 7 })
-  end
-    
-  love.graphics.printf("connect to end point", x, y, 150,"right")
+  end]]--
+  love.graphics.reset()
+  love.graphics.draw(level.map.startImage, x, y)
+  love.graphics.draw(self.arrow, x+80, y+20)
+  love.graphics.draw(level.map.endImage, x + 120, y)  
+  --love.graphics.printf("connect to end point", x, y, 150,"right")
 end
 
 --------------------------------
@@ -38,13 +42,18 @@ function LampsGoal:lampLighted()
 end
 
 function LampsGoal:draw(x, y)
-  love.graphics.setColor({ 255, 128, 0 })
+  --[[love.graphics.setColor({ 255, 128, 0 })
   if self.achieved then
     love.graphics.setColor({ 45, 252, 7 })
   end
     
   local lampsInfo = string.format("connect lamps: %d/%d", self.lampsLighted, self.lampsNo)
-  love.graphics.printf(lampsInfo, x, y, 150,"right")
+  love.graphics.printf(lampsInfo, x, y, 150,"right")]]--
+  
+  love.graphics.reset()
+  for i = 0, self.lampsNo - 1 do
+    love.graphics.draw(level.map.lampImage, x + i * 100 , y)
+  end
 end
 
 
