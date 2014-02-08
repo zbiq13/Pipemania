@@ -38,7 +38,7 @@ end
 
 function Pipe:drawAsAvailable(index)
   love.graphics.reset()
-  self:drawPipe( 0, level.map.tileHeight * ( 5 - index ) )
+  self:drawPipe( 5, 50 + ( level.map.tileHeight + 5 ) * ( 5 - index ) )
   end
 
 function Pipe:drawPipe(x, y)

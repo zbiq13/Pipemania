@@ -4,5 +4,5 @@ return {
     lamps = { { x = 'random', y = 'random' } },
     enemiesNo = 3,
     circlesNo = 2,
-    babeImage = love.graphics.newImage( "img/babes/laska5.png" )
+    babeImage = love.graphics.newImage( "img/babes/laska6.png" )
 }

@@ -70,7 +70,8 @@ function love.load()
   hardImage = love.graphics.newImage("img/hard.png")
   hardFocusImage = love.graphics.newImage("img/hard_focus.png")
   
-  
+  levelImage = love.graphics.newImage("img/level.png")
+  goalsImage = love.graphics.newImage("img/goals.png")
   arrowRedImage = love.graphics.newImage("img/arrowred.png")
   arrowGreenImage = love.graphics.newImage("img/arrowgreen.png")
   

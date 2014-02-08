@@ -8,6 +8,8 @@ function printGoalInfo()
   
   
   love.graphics.reset()
+  love.graphics.draw(goalsImage, width - 105, 10, 0, 0.8, 0.8)
+  
   yIndex = printGoalInfoImage(level.map.startImage, x, yRate, yIndex)
   
   for i, lamp in next, level.lamps, nil do
@@ -46,6 +48,6 @@ function printGoalInfo()
 end
 
 function printGoalInfoImage(image, x, yRate, yIndex)
-  love.graphics.draw(image, x, 10 + yRate * yIndex, 0, 0.7, 0.7)
+  love.graphics.draw(image, x, 50 + yRate * yIndex, 0, 0.7, 0.7)
   return yIndex + 1  
 end

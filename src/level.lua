@@ -117,12 +117,14 @@ end
 
 function Level:draw()
 
+    love.graphics.draw(levelImage, 5, 10, 0, 0.8, 0.8)
+    
     --draw available pieces
     for i, pipe in pairs(pipes) do
       pipe:drawAsAvailable( i )
     end
     
-    --printDebug()
+    --printDebug()    
     printGoalInfo()
     
     
