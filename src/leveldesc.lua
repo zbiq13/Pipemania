@@ -12,7 +12,7 @@ function readLevelDescs()
     lamps = {},
     initialTime = 100,
     pipeTime = 40,
-    waterSpeed = 10,
+    waterSpeed = { 10, 15, 20 },
     tileImage = love.graphics.newImage( "img/tile.gif" ),  
     startImage = love.graphics.newImage( "img/start.png" ),
     endImage = love.graphics.newImage( "img/end.png" ),

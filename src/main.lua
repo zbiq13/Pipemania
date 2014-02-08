@@ -22,6 +22,9 @@ function love.load()
   
   babeScale = 1
   
+  underAge = false
+  difficulty = 2
+  
   pipeTypes = {}
   table.insert( pipeTypes, HorizontalPipe )
   table.insert( pipeTypes, VerticalPipe )
@@ -59,7 +62,8 @@ function love.load()
 end
 
 function love.update(dt)
-  if not lost and not wonLevel then
+  --if not lost and not wonLevel then
+  if state == "playing" then
     
     --update start
     if waterFlowing then
@@ -257,19 +261,35 @@ function gameWon()
 end
 
 function love.keypressed(key, isrepeat)
-  player:keypressed(key)
   
-  if key == ' ' then
-      usePipe()
-   end  
- 
+  if state == "playing" then
+    player:keypressed(key) 
+  
+    if key == ' ' then
+        usePipe()
+    end
+  end
+   
+  if state == "askage" then
+    askAgeKeyPressed(key)  
+  end
+  
+  if state == "choosedifficulty" then
+    chooseDifficultyKeyPressed(key)  
+  end
+  
+  
   if key == "escape" then
       love.event.quit()
   end
   
-  if key == "return" then
+  if key == "return" or key == ' ' then
   
     if state == "start" then
+      state = "askage"
+    elseif  state == "askage" then
+      state = "choosedifficulty"
+    elseif state == "choosedifficulty" then
       babeTheme:stop()
       state = "playing"
       generateLevel()
@@ -311,6 +331,10 @@ function love.draw()
   
   if state == "start" then
     drawStart()
+  elseif state == "askage" then
+    drawAskAge()
+  elseif state == "choosedifficulty" then
+    drawChooseDifficulty()
   elseif state == "beforelevel" then
     drawGoals()
   elseif state == "playing" or state == "gamelost" then
@@ -334,6 +358,53 @@ end
 function drawStart()
   love.graphics.draw(startImage,width/2,0,0,1,1,startImage:getWidth()/2,0)
   drawPressToContinue()
+end
+
+function drawAskAge()
+  love.graphics.setColor(100, 100, 100)
+  love.graphics.rectangle('fill', 350, 400, 100, 100)
+  love.graphics.rectangle('fill', 800, 400, 100, 100)
+  love.graphics.setColor(230, 30, 30)
+  local askAgeX = 350
+  if underAge then
+    askAgeX = 800
+  end
+  love.graphics.rectangle('line', askAgeX, 400, 100, 100)
+  drawPressToContinue()
+end
+
+function askAgeKeyPressed(key)
+  if key == 'left' and underAge then
+    underAge = false
+  elseif key == 'right' and not underAge  then
+    underAge = true
+  end
+end  
+
+function drawChooseDifficulty()
+  love.graphics.setColor(100, 100, 100)
+  love.graphics.rectangle('fill', 300, 400, 100, 100)
+  love.graphics.rectangle('fill', 550, 400, 100, 100)
+  love.graphics.rectangle('fill', 800, 400, 100, 100)
+  love.graphics.setColor(230, 30, 30)
+  local chosen = 300
+  if difficulty == 2 then
+    chosen = 550
+  elseif difficulty == 3 then
+    chosen = 800
+  end
+  
+  love.graphics.rectangle('line', chosen, 400, 100, 100)
+  drawPressToContinue()
+end
+
+function chooseDifficultyKeyPressed(key)
+  if key == 'left' and difficulty > 1 then
+    difficulty = difficulty - 1    
+  elseif key == 'right' and difficulty < 3 then
+    difficulty = difficulty + 1
+  end
+  
 end
 
 function drawPressToContinue()

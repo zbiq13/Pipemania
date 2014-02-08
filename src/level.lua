@@ -59,7 +59,7 @@ function Level:init(levelDesc)
     
   self.startColor = { 0, 0, 0 }
   self.pipeTime = levelDesc.pipeTime
-  self.waterSpeed = levelDesc.waterSpeed
+  self.waterSpeed = levelDesc.waterSpeed[difficulty]
   self.initialTime = levelDesc.initialTime
   
   self.watertimer = Watertimer(self) 
