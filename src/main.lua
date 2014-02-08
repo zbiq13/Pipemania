@@ -63,6 +63,13 @@ function love.load()
   
   
   chooseDifficultyImage = love.graphics.newImage("img/choosedifficulty.png")
+  easyImage = love.graphics.newImage("img/easy.png")
+  easyFocusImage = love.graphics.newImage("img/easy_focus.png")
+  mediumImage = love.graphics.newImage("img/medium.png")
+  mediumFocusImage = love.graphics.newImage("img/medium_focus.png")
+  hardImage = love.graphics.newImage("img/hard.png")
+  hardFocusImage = love.graphics.newImage("img/hard_focus.png")
+  
   
   arrowRedImage = love.graphics.newImage("img/arrowred.png")
   arrowGreenImage = love.graphics.newImage("img/arrowgreen.png")
@@ -402,19 +409,20 @@ end
 function drawChooseDifficulty()
   love.graphics.draw(chooseDifficultyImage,0,0)
 
-  love.graphics.setColor(100, 100, 100)
-  love.graphics.rectangle('fill', 300, 400, 100, 100)
-  love.graphics.rectangle('fill', 550, 400, 100, 100)
-  love.graphics.rectangle('fill', 800, 400, 100, 100)
-  love.graphics.setColor(230, 30, 30)
-  local chosen = 300
-  if difficulty == 2 then
-    chosen = 550
+  if difficulty == 1 then
+    love.graphics.draw(easyFocusImage,250,450)
+    love.graphics.draw(mediumImage,500,450)
+    love.graphics.draw(hardImage,750,450)    
+  elseif difficulty == 2 then
+    love.graphics.draw(easyImage,250,450)
+    love.graphics.draw(mediumFocusImage,500,450)
+    love.graphics.draw(hardImage,750,450) 
   elseif difficulty == 3 then
-    chosen = 800
+    love.graphics.draw(easyImage,250,450)
+    love.graphics.draw(mediumImage,500,450)
+    love.graphics.draw(hardFocusImage,750,450) 
   end
   
-  love.graphics.rectangle('line', chosen, 400, 100, 100)
   drawPressToContinue()
 end
 
