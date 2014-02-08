@@ -54,6 +54,15 @@ function love.load()
   camera:setPosition( -xStart, -yStart )
   
   startImage = love.graphics.newImage("img/startgame.png")
+  askAgeImage = love.graphics.newImage("img/agequestion.png")
+  overAgeFocusImage = love.graphics.newImage("img/over18_focus.png")
+  overAgeImage = love.graphics.newImage("img/over18.png")
+  underAgeFocusImage = love.graphics.newImage("img/under18_focus.png")
+  underAgeImage = love.graphics.newImage("img/under18.png")
+  
+  
+  chooseDifficultyImage = love.graphics.newImage("img/choosedifficulty.png")
+  
   arrowRedImage = love.graphics.newImage("img/arrowred.png")
   arrowGreenImage = love.graphics.newImage("img/arrowgreen.png")
   
@@ -327,7 +336,8 @@ end
 
 
 function love.draw()
-  love.graphics.setColor( 208, 199, 183 )
+  --love.graphics.setColor( 208, 199, 183 )
+  love.graphics.setColor( 255, 255, 255 )
   love.graphics.rectangle("fill",0,0,width,height)
   love.graphics.reset()
   
@@ -363,15 +373,15 @@ function drawStart()
 end
 
 function drawAskAge()
-  love.graphics.setColor(100, 100, 100)
-  love.graphics.rectangle('fill', 350, 400, 100, 100)
-  love.graphics.rectangle('fill', 800, 400, 100, 100)
-  love.graphics.setColor(230, 30, 30)
-  local askAgeX = 350
+  love.graphics.draw(askAgeImage,0,0)
+
   if underAge then
-    askAgeX = 800
+    love.graphics.draw(overAgeImage,250,375)
+    love.graphics.draw(underAgeFocusImage,600,370)
+  else
+    love.graphics.draw(overAgeFocusImage,250,375)
+    love.graphics.draw(underAgeImage,600,370)
   end
-  love.graphics.rectangle('line', askAgeX, 400, 100, 100)
   drawPressToContinue()
 end
 
@@ -386,6 +396,8 @@ function askAgeKeyPressed(key)
 end  
 
 function drawChooseDifficulty()
+  love.graphics.draw(chooseDifficultyImage,0,0)
+
   love.graphics.setColor(100, 100, 100)
   love.graphics.rectangle('fill', 300, 400, 100, 100)
   love.graphics.rectangle('fill', 550, 400, 100, 100)
