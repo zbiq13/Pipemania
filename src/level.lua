@@ -3,6 +3,8 @@ require('point')
 require('lamp')
 require('goal')
 require('enemy')
+require('watertimer')
+
 
 
 Level = class()
@@ -52,12 +54,16 @@ function Level:init(levelDesc)
   self.enemies = {}
   for i = 1, self.map.enemiesNo do
     table.insert(self.enemies, Enemy())
-  end 
+  end
   
+    
   self.startColor = { 0, 0, 0 }
   self.pipeTime = levelDesc.pipeTime
   self.waterSpeed = levelDesc.waterSpeed
   self.initialTime = levelDesc.initialTime
+  
+  self.watertimer = Watertimer(self) 
+  
   
   self.babeImage = levelDesc.babeImage
   
@@ -115,12 +121,12 @@ function Level:draw()
       pipe:drawAsAvailable( i )
     end
     
-    watertimer:draw()
     --printDebug()
     printGoalInfo()
     
     
     camera:set()
+    self.watertimer:draw()
     love.graphics.reset()
     love.graphics.draw(self.map.backgroundImage, x, y)
     

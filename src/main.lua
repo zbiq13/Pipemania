@@ -1,5 +1,4 @@
 require('camera')
-require('watertimer')
 require('leveldesc')
 require('level')
 require('player')
@@ -104,8 +103,8 @@ function generateLevel()
   level = Level(levelDescs[1])
   --narazie zapetlam
   player = Player(level)
-  watertimer = Watertimer()
-  updatable = watertimer
+  
+  updatable = level.watertimer
   pipes = {}
   pipeIndex = 1
   
