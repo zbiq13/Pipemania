@@ -2,7 +2,7 @@ require('util/class')
 require('point')
 
 Lamp = class()
-function Lamp:init(lampDesc)
+function Lamp:init(lampDesc, level)
   self.point = Point(lampDesc, level.map.xSize, level.map.ySize)
   self.x = self.point.x
   self.y = self.point.y

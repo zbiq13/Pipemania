@@ -46,9 +46,15 @@ function Level:init(levelDesc)
   until ( levelDesc.endPoint.x ~= 'random' or math.fmod( math.abs( self.endPoint.x - self.startPoint.x ), self.map.xSize ) > 2 ) and
     ( levelDesc.endPoint.y ~= 'random' or math.fmod( math.abs( self.endPoint.y - self.startPoint.y ), self.map.ySize ) > 2 )
   
+  
+  self.startColor = { 0, 0, 0 }
+  self.pipeTime = levelDesc.pipeTime
+  self.waterSpeed = levelDesc.waterSpeed[difficulty]
+  self.initialTime = levelDesc.initialTime
+  
   self.lamps = {}
   for i, lampDesc in next, levelDesc.lamps, nil do
-    table.insert(self.lamps, Lamp(lampDesc))
+    table.insert(self.lamps, Lamp(lampDesc, self))
   end 
   
   self.enemies = {}
@@ -56,11 +62,6 @@ function Level:init(levelDesc)
     table.insert(self.enemies, Enemy())
   end
   
-    
-  self.startColor = { 0, 0, 0 }
-  self.pipeTime = levelDesc.pipeTime
-  self.waterSpeed = levelDesc.waterSpeed[difficulty]
-  self.initialTime = levelDesc.initialTime
   
   self.watertimer = Watertimer(self) 
   

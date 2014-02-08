@@ -62,13 +62,13 @@ CircleGoal = class( Goal )
 function CircleGoal:init(circlesNo)
   Goal.init(self)
   self.circlesNo = circlesNo
-  self.cirlcesDone = 0
+  self.circlesDone = 0
 end
 
 
 function CircleGoal:circleDone()
-  self.cirlcesDone = self.cirlcesDone + 1;
-  if self.cirlcesDone == self.circlesNo then
+  self.circlesDone = self.circlesDone + 1;
+  if self.circlesDone == self.circlesNo then
     self.achieved = true;
   end
 end
@@ -79,6 +79,6 @@ function CircleGoal:draw(x, y)
     love.graphics.setColor({ 45, 252, 7 })
   end
     
-  local circleInfo = string.format("make circles: %d/%d", self.cirlcesDone, self.circlesNo)
+  local circleInfo = string.format("make circles: %d/%d", self.circlesDone, self.circlesNo)
   love.graphics.printf(circleInfo, x, y, 150,"right")
 end

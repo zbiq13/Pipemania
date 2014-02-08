@@ -54,6 +54,7 @@ function love.load()
   camera:setPosition( -xStart, -yStart )
   
   startImage = love.graphics.newImage("img/startgame.png")
+  arrowImage = love.graphics.newImage("img/arrow.png")
   
   state = 'start'
   babeTheme:setLooping(true)
@@ -376,8 +377,10 @@ end
 function askAgeKeyPressed(key)
   if key == 'left' and underAge then
     underAge = false
+    putPipe:play()
   elseif key == 'right' and not underAge  then
     underAge = true
+    putPipe:play()
   end
 end  
 
@@ -400,9 +403,11 @@ end
 
 function chooseDifficultyKeyPressed(key)
   if key == 'left' and difficulty > 1 then
-    difficulty = difficulty - 1    
+    difficulty = difficulty - 1
+    putPipe:play()    
   elseif key == 'right' and difficulty < 3 then
     difficulty = difficulty + 1
+    putPipe:play()
   end
   
 end
