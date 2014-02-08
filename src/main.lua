@@ -54,7 +54,8 @@ function love.load()
   camera:setPosition( -xStart, -yStart )
   
   startImage = love.graphics.newImage("img/startgame.png")
-  arrowImage = love.graphics.newImage("img/arrow.png")
+  arrowRedImage = love.graphics.newImage("img/arrowred.png")
+  arrowGreenImage = love.graphics.newImage("img/arrowgreen.png")
   
   state = 'start'
   babeTheme:setLooping(true)

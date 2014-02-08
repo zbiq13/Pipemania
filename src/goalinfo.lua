@@ -12,23 +12,23 @@ function printGoalInfo()
   
   for i, lamp in next, level.lamps, nil do
     if lamp.lighted then
-      love.graphics.setColor(0,255,0)
+      yIndex = printGoalInfoImage(arrowGreenImage, x, yRate, yIndex)
+    else
+      yIndex = printGoalInfoImage(arrowRedImage, x, yRate, yIndex)   
     end
-    yIndex = printGoalInfoImage(arrowImage, x, yRate, yIndex)   
-    love.graphics.reset()
     yIndex = printGoalInfoImage(level.map.lampImage, x, yRate, yIndex)
   end
   
   for i = 0, level.circleGoal.circlesNo-1 do
     if i < level.circleGoal.circlesDone then
-      love.graphics.setColor(0,255,0)
+      yIndex = printGoalInfoImage(arrowGreenImage, x, yRate, yIndex)
+    else
+      yIndex = printGoalInfoImage(arrowRedImage, x, yRate, yIndex)   
     end
-    yIndex = printGoalInfoImage(arrowImage, x, yRate, yIndex)   
-    love.graphics.reset()
     yIndex = printGoalInfoImage(level.map.crossPipeImage, x, yRate, yIndex)
   end
   
-  yIndex = printGoalInfoImage(arrowImage, x, yRate, yIndex)
+  yIndex = printGoalInfoImage(arrowRedImage, x, yRate, yIndex)
   yIndex = printGoalInfoImage(level.map.endImage, x, yRate, yIndex)
   
   --[[ local y = 100;
