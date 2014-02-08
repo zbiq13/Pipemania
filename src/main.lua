@@ -11,6 +11,7 @@ require('goalinfo')
 
 function love.load()
   love.window.setMode(1300, 700, {fullscreen=false, vsync=false, minwidth=800, minheight=600})
+  
   math.randomseed(os.time())
   
   font = love.graphics.newFont( 42 )
@@ -39,11 +40,20 @@ function love.load()
   yStart = ( height - ( level.map.tileHeight * level.map.ySize ) ) / 2
 
   love.keyboard.setKeyRepeat( true )
-  camera:setPosition( -xStart, -yStart )  
+  camera:setPosition( -xStart, -yStart )
+  
+  --audio
+  electricWire = love.audio.newSource("audio/39542__the-bizniss__line-in-noise.wav", "static")
+  lostSound = love.audio.newSource("audio/lose.mp3")  
 end
 
 function love.update(dt)
   if not lost and not wonLevel then
+    
+    --update start
+    if waterFlowing then
+      startPipe:update(dt)
+    end
     
     --update pipes
     updatable:update(dt)  
@@ -86,7 +96,8 @@ function generateLevel()
   watertimer = Watertimer()
   updatable = watertimer
   pipes = {}
-  pipeIndex = 1;
+  pipeIndex = 1
+  waterFlowing = false
   lost = false
   wonLevel = false
   
@@ -102,8 +113,13 @@ function generateLevel()
     pipesMatrix[i] = {}
   end
 
-  pipesMatrix[level.startPoint.x][level.startPoint.y] = StartPipe()
-  pipesMatrix[level.endPoint.x][level.endPoint.y] = EndPipe()
+  startPipe = StartPipe()
+  startPipe:use(level.startPoint.x, level.startPoint.y)
+  pipesMatrix[level.startPoint.x][level.startPoint.y] = startPipe
+  
+  endPipe = EndPipe()
+  endPipe:use(level.endPoint.x, level.endPoint.y)
+  pipesMatrix[level.endPoint.x][level.endPoint.y] = endPipe
   
   for i,lamp in next,level.lamps,nil do
     pipesMatrix[lamp.point.x][lamp.point.y] = lamp
@@ -171,36 +187,50 @@ end
 function startFlowingWater()
   local pipe = getPipeFromMatrix(level.startPoint.x, level.startPoint.y-1)
   if pipe and pipe:acceptWaterFrom(0,-1) then
+    waterFlowing = true
     pipe:waterFrom(0,-1)
     updatable = pipe 
+    electricWire:setVolume(3.0)
+    electricWire:setLooping(true)
+    electricWire:play()
   else
     gameLost()
   end
 end
 
 function flowToPipe()
+  if updatable:is_a(EndPipe) then
+      level:endPointReached()
+      level:checkResult()
+      return      
+  end
+  
   local x, y = updatable:getOffsetForNextPipe()
   local pipe = getPipeFromMatrix(updatable.x + x, updatable.y + y)
   if pipe and pipe:acceptWaterFrom(x, y) then
-    if pipe:is_a(EndPipe) then
+    --[[if pipe:is_a(EndPipe) then
       level:endPointReached()
       level:checkResult()      
-    else
+    else]]--
       --updatable:filledWithWater()
       updatable = pipe 
       updatable:waterFrom(x, y)
-    end
+    --end
   else
     gameLost()
   end
 end
 
 function gameLost()
+  lostSound:setVolume(2.0)
+  lostSound:play()
+  electricWire:stop()
   lost = true
   --todo
 end
 
 function levelWon()
+  electricWire:stop()
   wonLevel = true
 end
 
@@ -248,7 +278,9 @@ end
 
 
 function love.draw()
-  
+  love.graphics.setColor( 228, 219, 203 )
+  love.graphics.rectangle("fill",0,0,width,height)
+  love.graphics.reset()
   --draw available pieces
   for i, pipe in pairs(pipes) do
     pipe:drawAsAvailable( i )
@@ -262,7 +294,9 @@ function love.draw()
   camera:set()
   level:draw()
   
-
+  startPipe:draw()
+  endPipe:draw()
+  
   --draw used pieces
   for i, pipe in pairs(pipesUsed) do
     pipe:draw()

@@ -14,8 +14,8 @@ function readLevelDescs()
     pipeTime = 40,
     waterSpeed = 10,
     tileImage = love.graphics.newImage( "img/tile.gif" ),  
-    startImage = love.graphics.newImage( "img/start.gif" ),
-    endImage = love.graphics.newImage( "img/end.gif" ),
+    startImage = love.graphics.newImage( "img/start.png" ),
+    endImage = love.graphics.newImage( "img/end.png" ),
     backgroundImage = love.graphics.newImage( "img/background800640.png" ),
     
     verticalPipeImage = love.graphics.newImage( "img/pipe/pipe1.png" ),
@@ -26,6 +26,8 @@ function readLevelDescs()
     upRightPipeImage = love.graphics.newImage( "img/pipe/pipe5.png" ),
     downRightPipeImage = love.graphics.newImage( "img/pipe/pipe4.png" ),
     
+    startPipeImageAnim = {},
+    endPipeImageAnim = {},
     verticalPipeImageAnim = {},
     horizontalPipeImageAnim = {},    
     downRightPipeImageAnim = {},
@@ -35,11 +37,22 @@ function readLevelDescs()
     
     enemiesNo = 0,
     enemyImageAnim = {},
+   
     
     circlesNo = 0
   }
   
-  local animDir = love.filesystem.getDirectoryItems("img/pipe1anim")
+  local animDir = love.filesystem.getDirectoryItems("img/startanim")
+  for k, file in ipairs(animDir) do
+    table.insert(defaultLevel.startPipeImageAnim, love.graphics.newImage("img/startanim/"..file) )
+  end
+  
+  animDir = love.filesystem.getDirectoryItems("img/exitanim")
+  for k, file in ipairs(animDir) do
+    table.insert(defaultLevel.endPipeImageAnim, love.graphics.newImage("img/exitanim/"..file) )
+  end
+  
+  animDir = love.filesystem.getDirectoryItems("img/pipe1anim")
   for k, file in ipairs(animDir) do
     table.insert(defaultLevel.verticalPipeImageAnim, love.graphics.newImage("img/pipe1anim/"..file) )
   end

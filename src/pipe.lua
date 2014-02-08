@@ -382,6 +382,18 @@ end
 
 -------------------------------------
 StartPipe = class( Pipe )
+function StartPipe:init(id)
+  Pipe.init(self, id)
+  self.image = level.map.startImage
+  self.animationImages = level.map.startPipeImageAnim
+  self.animThreshold = math.floor( level.pipeTime / ( table.getn( self.animationImages ) - 1 ) )
+  self.animationFramesNo = table.getn( self.animationImages )
+  self.imageIndex = 1
+  self.animateRate = 5
+  self.animateSpeed= 25
+  self.blink = self.animateRate  
+end
+
 
 function StartPipe:acceptWaterFrom(x, y)
   return false
@@ -391,11 +403,27 @@ function StartPipe:getOffsetForNextPipe()
  return 0, -1 
 end
 
-function StartPipe:drawPipe(x, y)
+function StartPipe:update(dt)
+  self.blink = self.blink - dt * self.animateSpeed
+  self:animate()
 end
 
+function StartPipe:animate()
+  if self.blink < 0 then
+    self.blink = self.animateRate
+    self.imageIndex = math.fmod(self.imageIndex, self.animationFramesNo) + 1
+    self.animation = self.animationImages[ self.imageIndex ] 
+  end
+end
 
 EndPipe = class( Pipe )
+function EndPipe:init(id)
+  Pipe.init(self, id)
+  self.image = level.map.endImage
+  self.animationImages = level.map.endPipeImageAnim
+  self.animThreshold = math.floor( level.pipeTime / ( table.getn( self.animationImages ) - 1 ) )  
+end
+
 
 function EndPipe:acceptWaterFrom(x, y)
   return x == 0 and y == 1
@@ -405,6 +433,6 @@ function EndPipe:getOffsetForNextPipe()
  return 0, 0
 end
 
-function EndPipe:drawPipe(x, y)
-end
+--function EndPipe:drawPipe(x, y)
+--end
 

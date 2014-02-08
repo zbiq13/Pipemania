@@ -25,6 +25,8 @@ function Level:init(levelDesc)
     upRightPipeImage = levelDesc.upRightPipeImage,
     downRightPipeImage = levelDesc.downRightPipeImage,
     
+    startPipeImageAnim = levelDesc.startPipeImageAnim,
+    endPipeImageAnim = levelDesc.endPipeImageAnim,
     verticalPipeImageAnim = levelDesc.verticalPipeImageAnim,
     horizontalPipeImageAnim = levelDesc.horizontalPipeImageAnim,
     downRightPipeImageAnim = levelDesc.downRightPipeImageAnim,
@@ -109,8 +111,8 @@ function Level:draw()
   love.graphics.reset()
   love.graphics.draw(self.map.backgroundImage, x, y)
   
-  self.startPoint:drawWithImage(self.map.startImage)
-  self.endPoint:drawWithImage(self.map.endImage)
+  --self.startPoint:drawWithImage(self.map.startImage)
+  --self.endPoint:drawWithImage(self.map.endImage)
   
   for i, lamp in next,self.lamps,nil do
     lamp:draw()
